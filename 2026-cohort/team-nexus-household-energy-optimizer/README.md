@@ -24,7 +24,6 @@ Apartment tenants lack clear, actionable metrics to calculate and reduce their p
 - Google Cybersecurity Professional Certificate
 - Google Data Analytics Professional Certificate
 - Google Digital Marketing Professional Certificate
-- Google Project Management Professional Certificate
 - Google UX Design Professional Certificate
 
 ---
@@ -76,7 +75,6 @@ team-nexus-household-energy-optimizer/
 | Name | Track | Contact | Responsibilities |
 |------|-------|---------|------------------|
 | Ashenafi Demssie | Cybersecurity Track | | |
-| Ayuk Hannah Ndicheck | Project Management Track | | |
 | Peace Kahunde | Data Analytics Track | | |
 | Priscilla Gyepi-Garbrah | Digital Marketing Track | | |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX Design Track | sehr.abrar1@gmail.com | |
