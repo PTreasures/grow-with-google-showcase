@@ -13,46 +13,61 @@
 }
 
 .top-bar-row {
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 12px 24px;
+  padding: 14px 24px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
+  flex-wrap: nowrap;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: var(--radius-control);
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
   text-decoration: none;
   flex-shrink: 0;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.brand svg {
-  color: var(--series-blue);
+.brand:hover {
+  background: var(--page);
+}
+
+.brand.active {
+  color: var(--brand-purple);
+  background: color-mix(in srgb, var(--brand-purple) 10%, transparent);
+}
+
+.brand-logo {
+  flex-shrink: 0;
 }
 
 .nav-bar {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex-grow: 1;
-  flex-wrap: wrap;
+  white-space: nowrap;
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 7px;
+  padding: 8px 14px;
   border-radius: var(--radius-control);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none;
+  white-space: nowrap;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -74,9 +89,15 @@
 }
 
 .select-compact {
-  min-width: 170px;
+  min-width: 160px;
   padding: 8px 32px 8px 12px;
   font-size: 13px;
+}
+
+@media (max-width: 780px) {
+  .top-bar-row {
+    overflow-x: auto;
+  }
 }
 
 .page-content {
@@ -103,13 +124,94 @@
   max-width: 58ch;
 }
 
+.hero {
+  padding: 8px 0 36px;
+  margin-bottom: 36px;
+  border-bottom: 1px solid var(--gridline);
+}
+
+.hero-logo {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.hero-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-purple);
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  max-width: 20ch;
+}
+
+.hero-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 62ch;
+  margin-bottom: 26px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radius-control);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--series-blue);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--series-blue) 40%, transparent);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--page);
+}
+
 .section-label {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
-  margin: 32px 0 14px;
+  margin: 32px 0 6px;
+}
+
+.section-intro {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin-bottom: 18px;
 }
 
 .how-it-works {
@@ -131,6 +233,13 @@
   cursor: pointer;
 }
 
+.step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
 .step-icon {
   display: inline-flex;
   align-items: center;
@@ -140,7 +249,12 @@
   border-radius: 10px;
   background: color-mix(in srgb, var(--series-blue) 14%, transparent);
   color: var(--series-blue);
-  margin-bottom: 12px;
+}
+
+.step-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--gridline);
 }
 
 .step-title {
@@ -153,6 +267,31 @@
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.5;
+}
+
+.narrative-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand-purple);
+  border-radius: var(--radius-card);
+  padding: 22px 26px;
+  margin-top: 32px;
+}
+
+.narrative-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-purple);
+  margin-bottom: 10px;
+}
+
+.narrative-text {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.7;
+  max-width: 68ch;
 }
 
 .theme-toggle {

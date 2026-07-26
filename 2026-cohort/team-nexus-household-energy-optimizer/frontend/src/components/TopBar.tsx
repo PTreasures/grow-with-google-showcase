@@ -1,14 +1,13 @@
-import { NavLink } from "react-router-dom";
-import { Flame, Gauge, Home, SlidersHorizontal, Zap } from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
+import { Flame, Gauge, SlidersHorizontal } from "lucide-react";
 import { BASELINE_PROFILES } from "../data/appliances";
 import type { ThemePreference } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_ITEMS = [
-  { to: "/", label: "Home", icon: Home, end: true },
-  { to: "/simulator", label: "Simulator", icon: SlidersHorizontal, end: false },
-  { to: "/score", label: "Score & Breakdown", icon: Gauge, end: false },
-  { to: "/hogs", label: "Energy Hogs", icon: Flame, end: false },
+  { to: "/simulator", label: "Simulator", icon: SlidersHorizontal },
+  { to: "/score", label: "Score", icon: Gauge },
+  { to: "/hogs", label: "Energy Hogs", icon: Flame },
 ];
 
 interface TopBarProps {
@@ -19,11 +18,14 @@ interface TopBarProps {
 }
 
 export function TopBar({ baselineId, onBaselineChange, theme, onThemeChange }: TopBarProps) {
+  const { pathname } = useLocation();
+  const onHome = pathname === "/";
+
   return (
     <header className="top-bar">
       <div className="top-bar-row">
-        <NavLink to="/" className="brand">
-          <Zap size={18} strokeWidth={2} />
+        <NavLink to="/" className={onHome ? "brand active" : "brand"}>
+          <img src="/favicon.svg" alt="" className="brand-logo" width={20} height={19} />
           Tenant Power Tracker
         </NavLink>
 
@@ -34,10 +36,9 @@ export function TopBar({ baselineId, onBaselineChange, theme, onThemeChange }: T
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.end}
                 className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
               >
-                <Icon size={15} strokeWidth={1.75} />
+                <Icon size={16} strokeWidth={1.75} />
                 {item.label}
               </NavLink>
             );
