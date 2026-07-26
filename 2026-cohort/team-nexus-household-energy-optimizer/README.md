@@ -109,7 +109,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 |------|-------|---------|------------------|
 | Ashenafi Demssie | Cybersecurity Track | | |
 | Peace Kahunde | Data Analytics Track | | |
-| Priscilla Gyepi-Garbrah | Digital Marketing Track | | |
+| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Track | gyepigarbrahpriscilla@gmail.com | |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX Design Track | sehr.abrar1@gmail.com | |
 
 ---
