@@ -46,7 +46,7 @@ team-nexus-household-energy-optimizer/
 │   └── .env.example       # Environment variable template
 ├── frontend/              # React + TypeScript app (scaffold pending, see Setup below)
 ├── docs/                  # Project documentation and reports
-├── mvp.md                 # MVP scope doc
+├── .gitignore             # Ignored files (env, deps, build output, etc.)
 ├── LICENSE                # MIT License
 └── README.md              # Project overview and documentation
 ```
@@ -85,15 +85,15 @@ npm run dev
 
 **Submission Deadline: August 14, 2026**
 
-Kickoff slipped to July 25, so the roadmap below is compressed (see [mvp.md](mvp.md) for full scope details).
+Kickoff slipped to July 25, so the roadmap below is compressed.
 
 | Phase | Timeline | Focus |
 | ------ | -------- | ----- |
 | Days 1–3 | July 25 – July 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
 | Days 4–7 | July 28 – July 31 | Usage simulator + score logic in parallel |
-| Week 2 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
+| Days 8–14 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
 | Days 15–18 | August 8 – August 11 | Deployment, README finalized |
-| Buffer | August 12 – August 14 | Final testing, demo/pitch prep, submission |
+| Days 19–21 | August 12 – August 14 | Final testing, demo/pitch prep, submission |
 
 ---
 
