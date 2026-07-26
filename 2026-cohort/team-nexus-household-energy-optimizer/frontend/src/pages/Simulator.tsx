@@ -2,9 +2,11 @@ import { useOutletContext } from "react-router-dom";
 import type { EnergyContext } from "../context";
 import { UsageSimulator } from "../components/UsageSimulator";
 import { SavingsChart } from "../components/SavingsChart";
+import { ScoreSummaryBar } from "../components/ScoreSummaryBar";
 
 export function Simulator() {
-  const { hours, onHoursChange, defaultCost, userCost } = useOutletContext<EnergyContext>();
+  const { hours, onHoursChange, defaultCost, userCost, score, baselineProfile } =
+    useOutletContext<EnergyContext>();
 
   return (
     <div className="page">
@@ -15,6 +17,9 @@ export function Simulator() {
           live.
         </p>
       </div>
+
+      <ScoreSummaryBar score={score} baselineLabel={baselineProfile.label} />
+
       <div className="main-grid">
         <UsageSimulator hours={hours} onChange={onHoursChange} />
         <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} />

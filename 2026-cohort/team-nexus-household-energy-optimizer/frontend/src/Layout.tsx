@@ -12,6 +12,7 @@ import {
 } from "./lib/calculations";
 import { applyTheme, getStoredTheme, type ThemePreference } from "./lib/theme";
 import { TopBar } from "./components/TopBar";
+import { Footer } from "./components/Footer";
 import type { EnergyContext } from "./context";
 
 export function Layout() {
@@ -69,11 +70,7 @@ export function Layout() {
       <main className="page-content">
         <Outlet context={context} />
       </main>
-      <footer className="app-footer">
-        Figures are estimates benchmarked against sample EIA.gov and Kaggle usage data, not a
-        live utility feed. No account, personal, or bill data is stored, everything here runs
-        in this browser session only.
-      </footer>
+      <Footer />
     </div>
   );
 }

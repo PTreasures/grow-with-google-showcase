@@ -1,5 +1,5 @@
-import { useOutletContext } from "react-router-dom";
-import { DollarSign, Leaf, Zap } from "lucide-react";
+import { Link, useOutletContext } from "react-router-dom";
+import { DollarSign, Leaf, SlidersHorizontal, Zap } from "lucide-react";
 import type { EnergyContext } from "../context";
 import { buildDelta, formatCurrency, formatKwh } from "../lib/calculations";
 import { EnergyScoreCard } from "../components/EnergyScoreCard";
@@ -21,12 +21,18 @@ export function ScoreBreakdown() {
 
   return (
     <div className="page">
-      <div className="page-header">
-        <h1>Score &amp; breakdown</h1>
-        <p className="page-subtitle">
-          Your Personalized Energy Score compares your simulated usage against a regional
-          household baseline.
-        </p>
+      <div className="page-header page-header-actions">
+        <div>
+          <h1>Score &amp; breakdown</h1>
+          <p className="page-subtitle">
+            Your Personalized Energy Score compares your simulated usage against a regional
+            household baseline.
+          </p>
+        </div>
+        <Link to="/simulator" className="btn btn-secondary">
+          <SlidersHorizontal size={15} strokeWidth={2} />
+          Continue simulating
+        </Link>
       </div>
 
       <div className="stat-grid">

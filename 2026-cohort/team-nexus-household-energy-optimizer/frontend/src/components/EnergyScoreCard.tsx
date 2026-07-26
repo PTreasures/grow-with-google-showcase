@@ -1,12 +1,8 @@
+import { scoreStatus } from "../lib/scoreStatus";
+
 interface EnergyScoreCardProps {
   score: number;
   baselineLabel: string;
-}
-
-function scoreStatus(score: number): { color: string; label: string } {
-  if (score >= 80) return { color: "var(--status-good)", label: "Better than baseline" };
-  if (score >= 50) return { color: "var(--status-warning)", label: "Room to improve" };
-  return { color: "var(--status-critical)", label: "High usage" };
 }
 
 const SIZE = 116;

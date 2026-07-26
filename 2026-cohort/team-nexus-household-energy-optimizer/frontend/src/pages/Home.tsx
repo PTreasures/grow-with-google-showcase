@@ -45,7 +45,6 @@ export function Home() {
     <div className="page">
       <section className="hero">
         <img src="/favicon.svg" alt="" className="hero-logo" width={44} height={42} />
-        <div className="hero-eyebrow">Team Nexus &middot; UN SDG 7, Affordable &amp; Clean Energy</div>
         <h1 className="hero-title">Know exactly where your energy dollars go.</h1>
         <p className="hero-subtitle">
           Tenant Power Tracker estimates your monthly energy footprint from appliance usage,
