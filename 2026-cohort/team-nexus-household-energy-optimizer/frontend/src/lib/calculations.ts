@@ -28,6 +28,11 @@ export function monthlyCarbonLbs(kwh: number, factor: number = CARBON_LBS_PER_KW
 
 export type HoursByCategory = Record<ApplianceCategory, number>;
 
+export const DEFAULT_HOURS: HoursByCategory = APPLIANCES.reduce((acc, appliance) => {
+  acc[appliance.id] = appliance.defaultHours;
+  return acc;
+}, {} as HoursByCategory);
+
 export interface ApplianceBreakdown {
   appliance: Appliance;
   hours: number;
@@ -74,4 +79,25 @@ export function formatCurrency(value: number): string {
 
 export function formatKwh(value: number): string {
   return `${value.toLocaleString("en-US", { maximumFractionDigits: 0 })} kWh`;
+}
+
+export interface StatDelta {
+  text: string;
+  isGood: boolean;
+  direction: "up" | "down";
+}
+
+/** Compares a current value to the default-usage baseline for a stat tile's delta badge. */
+export function buildDelta(
+  current: number,
+  base: number,
+  format: (value: number) => string,
+): StatDelta {
+  const diff = current - base;
+  if (Math.abs(diff) < 0.01) {
+    return { text: "On par with default", isGood: true, direction: "down" };
+  }
+  const direction = diff > 0 ? "up" : "down";
+  const sign = diff > 0 ? "+" : "-";
+  return { text: `${sign}${format(Math.abs(diff))} vs default`, isGood: diff <= 0, direction };
 }

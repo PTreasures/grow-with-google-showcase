@@ -1,0 +1,24 @@
+import { useOutletContext } from "react-router-dom";
+import type { EnergyContext } from "../context";
+import { UsageSimulator } from "../components/UsageSimulator";
+import { SavingsChart } from "../components/SavingsChart";
+
+export function Simulator() {
+  const { hours, onHoursChange, defaultCost, userCost } = useOutletContext<EnergyContext>();
+
+  return (
+    <div className="page">
+      <div className="page-header">
+        <h1>Usage simulator</h1>
+        <p className="page-subtitle">
+          Adjust hours per day for each appliance category and watch your monthly cost update
+          live.
+        </p>
+      </div>
+      <div className="main-grid">
+        <UsageSimulator hours={hours} onChange={onHoursChange} />
+        <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} />
+      </div>
+    </div>
+  );
+}

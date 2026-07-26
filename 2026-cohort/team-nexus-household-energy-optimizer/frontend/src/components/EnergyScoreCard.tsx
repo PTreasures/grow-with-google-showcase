@@ -1,5 +1,3 @@
-import { Gauge } from "lucide-react";
-
 interface EnergyScoreCardProps {
   score: number;
   baselineLabel: string;
@@ -11,13 +9,43 @@ function scoreStatus(score: number): { color: string; label: string } {
   return { color: "var(--status-critical)", label: "High usage" };
 }
 
+const SIZE = 116;
+const STROKE = 10;
+const RADIUS = (SIZE - STROKE) / 2;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
 export function EnergyScoreCard({ score, baselineLabel }: EnergyScoreCardProps) {
   const status = scoreStatus(score);
+  const filled = (Math.max(1, Math.min(100, score)) / 100) * CIRCUMFERENCE;
+
   return (
     <div className="card score-card">
-      <Gauge size={20} strokeWidth={1.75} color="var(--text-muted)" />
-      <div className="score-value" style={{ color: status.color }}>
-        {score}
+      <div className="gauge" style={{ width: SIZE, height: SIZE }}>
+        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+          <circle
+            cx={SIZE / 2}
+            cy={SIZE / 2}
+            r={RADIUS}
+            fill="none"
+            stroke={status.color}
+            strokeOpacity={0.16}
+            strokeWidth={STROKE}
+          />
+          <circle
+            cx={SIZE / 2}
+            cy={SIZE / 2}
+            r={RADIUS}
+            fill="none"
+            stroke={status.color}
+            strokeWidth={STROKE}
+            strokeLinecap="round"
+            strokeDasharray={`${filled} ${CIRCUMFERENCE}`}
+            transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
+          />
+        </svg>
+        <div className="gauge-value" style={{ color: status.color }}>
+          {score}
+        </div>
       </div>
       <div className="score-caption">Personalized Energy Score vs {baselineLabel}</div>
       <span
