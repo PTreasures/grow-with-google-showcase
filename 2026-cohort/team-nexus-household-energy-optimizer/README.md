@@ -14,7 +14,7 @@ Apartment tenants lack clear, actionable metrics to calculate and reduce their p
 
 ## 2. Proposed Solution
 
-> *Coming soon.*
+A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips, all benchmarked against real-world datasets (EIA.gov, Kaggle) instead of live hardware readings.
 
 ---
 
@@ -30,7 +30,9 @@ Apartment tenants lack clear, actionable metrics to calculate and reduce their p
 
 ## 4. Tech Stack
 
-> *Coming soon.*
+- **Backend**: Flask (Python)
+- **Frontend**: React + TypeScript
+- **Deployment**: Render (backend), Netlify/Vercel (frontend) (TBD once we're ready to deploy)
 
 ---
 
@@ -38,8 +40,13 @@ Apartment tenants lack clear, actionable metrics to calculate and reduce their p
 
 ```bash
 team-nexus-household-energy-optimizer/
+├── backend/               # Flask API
+│   ├── app.py             # App entry point
+│   ├── requirements.txt   # Python dependencies
+│   └── .env.example       # Environment variable template
+├── frontend/              # React + TypeScript app (scaffold pending, see Setup below)
 ├── docs/                  # Project documentation and reports
-├── src/                   # Source code
+├── mvp.md                 # MVP scope doc
 ├── LICENSE                # MIT License
 └── README.md              # Project overview and documentation
 ```
@@ -48,19 +55,45 @@ team-nexus-household-energy-optimizer/
 
 ## 6. Setup / Run Instructions
 
-> *Coming soon.*
+### Backend (Flask)
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+python app.py
+```
+
+The API will run at `http://localhost:5000`. A `/api/health` route is included as a starting point.
+
+### Frontend (React + TypeScript)
+
+Not scaffolded yet. When ready to start:
+
+```bash
+npm create vite@latest frontend -- --template react-ts
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
 ## 7. Project Timeline
 
-| Phase | Timeline |
-| ------ | -------- |
-| Project Kickoff | July 15 |
-| Research & Planning | July 15 – July 22 |
-| Design & Development | July 23 – August 8 |
-| Testing & Refinement | August 9 – August 12 |
-| Final Documentation & Walkthrough | August 13 – August 14 |
+**Submission Deadline: August 14, 2026**
+
+Kickoff slipped to July 25, so the roadmap below is compressed (see [mvp.md](mvp.md) for full scope details).
+
+| Phase | Timeline | Focus |
+| ------ | -------- | ----- |
+| Days 1–3 | July 25 – July 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
+| Days 4–7 | July 28 – July 31 | Usage simulator + score logic in parallel |
+| Week 2 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
+| Days 15–18 | August 8 – August 11 | Deployment, README finalized |
+| Buffer | August 12 – August 14 | Final testing, demo/pitch prep, submission |
 
 ---
 
