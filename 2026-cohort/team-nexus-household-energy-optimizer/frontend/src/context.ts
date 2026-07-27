@@ -1,10 +1,19 @@
-import type { BaselineProfile } from "./data/appliances";
+import type { Appliance, BaselineProfile } from "./data/appliances";
+import type { Region } from "./data/regions";
 import type { ApplianceBreakdown, HoursByCategory } from "./lib/calculations";
+
+export interface NewApplianceInput {
+  label: string;
+  watts: number;
+}
 
 export interface EnergyContext {
   hours: HoursByCategory;
-  onHoursChange: (category: keyof HoursByCategory, value: number) => void;
+  onHoursChange: (id: string, hours: number) => void;
   baselineProfile: BaselineProfile;
+  region: Region;
+  /** Formats a number as currency in the selected region's local currency and locale. */
+  formatCost: (value: number) => string;
   defaultBreakdown: ApplianceBreakdown[];
   userBreakdown: ApplianceBreakdown[];
   defaultCost: number;
@@ -15,4 +24,7 @@ export interface EnergyContext {
   carbonLbs: number;
   score: number;
   hogs: ApplianceBreakdown[];
+  customAppliances: Appliance[];
+  onAddCustomAppliance: (input: NewApplianceInput) => void;
+  onRemoveCustomAppliance: (id: string) => void;
 }

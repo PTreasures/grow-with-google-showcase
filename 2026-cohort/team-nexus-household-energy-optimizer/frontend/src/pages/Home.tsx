@@ -1,7 +1,16 @@
 import { Link, useOutletContext } from "react-router-dom";
-import { DollarSign, Flame, Gauge, Leaf, SlidersHorizontal, Zap } from "lucide-react";
+import {
+  DollarSign,
+  Flame,
+  Gauge,
+  Leaf,
+  PlugZap,
+  SlidersHorizontal,
+  TrendingDown,
+  Zap,
+} from "lucide-react";
 import type { EnergyContext } from "../context";
-import { buildDelta, formatCurrency, formatKwh } from "../lib/calculations";
+import { buildDelta, formatKwh } from "../lib/calculations";
 import { EnergyScoreCard } from "../components/EnergyScoreCard";
 import { StatTile } from "../components/StatTile";
 
@@ -29,10 +38,29 @@ const STEPS = [
   },
 ];
 
+const BENEFITS = [
+  {
+    icon: DollarSign,
+    title: "Cut your bill",
+    body: "See exactly which appliances cost you the most, and what changing them actually saves, before you commit to anything.",
+  },
+  {
+    icon: PlugZap,
+    title: "No hardware required",
+    body: "No smart meters or smart plugs to buy or install. Just enter your usage and get real numbers back.",
+  },
+  {
+    icon: TrendingDown,
+    title: "Catch it before you owe it",
+    body: "Your score and cost update live as you adjust, so you catch a costly habit before the bill arrives, not after.",
+  },
+];
+
 export function Home() {
   const {
     score,
     baselineProfile,
+    formatCost,
     userCost,
     defaultCost,
     userKwh,
@@ -62,34 +90,45 @@ export function Home() {
         </div>
       </section>
 
-      <div className="section-label">Your current snapshot</div>
+      <div className="section-label">Why it matters</div>
       <p className="section-intro">
-        Based on the default appliance schedule until you customize it in the simulator.
+        A Personalized Energy Score turns an abstract bill into something you can actually act
+        on.
       </p>
-      <div className="stat-grid">
-        <EnergyScoreCard score={score} baselineLabel={baselineProfile.label} />
-        <StatTile
-          icon={DollarSign}
-          label="Monthly cost"
-          value={formatCurrency(userCost)}
-          delta={buildDelta(userCost, defaultCost, formatCurrency)}
-        />
-        <StatTile
-          icon={Zap}
-          label="Monthly usage"
-          value={formatKwh(userKwh)}
-          delta={buildDelta(userKwh, defaultKwh, formatKwh)}
-        />
-        <StatTile
-          icon={Leaf}
-          label="Carbon footprint"
-          value={`${carbonLbs.toFixed(0)} lbs CO2`}
-          delta={buildDelta(carbonLbs, defaultCarbonLbs, (v) => `${v.toFixed(0)} lbs`)}
-        />
+      <div className="how-it-works">
+        {BENEFITS.map((benefit) => {
+          const Icon = benefit.icon;
+          return (
+            <div className="card step-card" key={benefit.title}>
+              <div className="step-top">
+                <span className="step-icon">
+                  <Icon size={20} strokeWidth={1.75} />
+                </span>
+              </div>
+              <div className="step-title">{benefit.title}</div>
+              <p className="step-body">{benefit.body}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="narrative-card">
+        <div className="narrative-eyebrow">Meet Alex</div>
+        <p className="narrative-text">
+          Alex lives alone in a one-bedroom apartment and was paying $142 a month without
+          knowing why. Running the simulator, they found their window AC was cycling nearly 10
+          hours a day, over half of their entire bill on its own. Dropping it to 6 hours and
+          switching laundry to cold water brought their monthly cost down to $97, a $45
+          difference, without changing anything about their day-to-day comfort. Their
+          Personalized Energy Score went from 41 to 76 in the process, and it took less than
+          five minutes of dragging sliders to find.
+        </p>
       </div>
 
       <div className="section-label">How it works</div>
-      <p className="section-intro">Three steps to a clearer picture of your bill.</p>
+      <p className="section-intro">
+        The same three steps that got Alex there, applied to your own usage.
+      </p>
       <div className="how-it-works">
         {STEPS.map((step) => {
           const Icon = step.icon;
@@ -108,14 +147,30 @@ export function Home() {
         })}
       </div>
 
-      <div className="narrative-card">
-        <div className="narrative-eyebrow">Why it matters</div>
-        <p className="narrative-text">
-          Meet Alex, a tenant who noticed their laundry routine was quietly adding to their
-          bill every month. A few slider adjustments in the simulator later, they found a
-          routine that could save nearly $45 a month, without giving up hot showers or air
-          conditioning.
-        </p>
+      <div className="section-label">Your current snapshot</div>
+      <p className="section-intro">
+        Based on the default appliance schedule, your numbers, ready whenever you are.
+      </p>
+      <div className="stat-grid">
+        <EnergyScoreCard score={score} baselineLabel={baselineProfile.label} />
+        <StatTile
+          icon={DollarSign}
+          label="Monthly cost"
+          value={formatCost(userCost)}
+          delta={buildDelta(userCost, defaultCost, formatCost)}
+        />
+        <StatTile
+          icon={Zap}
+          label="Monthly usage"
+          value={formatKwh(userKwh)}
+          delta={buildDelta(userKwh, defaultKwh, formatKwh)}
+        />
+        <StatTile
+          icon={Leaf}
+          label="Carbon footprint"
+          value={`${carbonLbs.toFixed(0)} lbs CO2`}
+          delta={buildDelta(carbonLbs, defaultCarbonLbs, (v) => `${v.toFixed(0)} lbs`)}
+        />
       </div>
     </div>
   );

@@ -1,18 +1,19 @@
 import type { ApplianceBreakdown } from "../lib/calculations";
-import { formatCurrency, formatKwh } from "../lib/calculations";
-import { CATEGORY_COLORS } from "../lib/categoryColors";
-import { APPLIANCE_ICONS } from "./applianceIcons";
+import { formatKwh } from "../lib/calculations";
+import { getCategoryColor } from "../lib/categoryColors";
+import { getApplianceIcon } from "./applianceIcons";
 
 interface TopHogsCardProps {
   hogs: ApplianceBreakdown[];
+  formatCost: (value: number) => string;
 }
 
-export function TopHogsCard({ hogs }: TopHogsCardProps) {
+export function TopHogsCard({ hogs, formatCost }: TopHogsCardProps) {
   return (
     <div className="hogs-grid">
       {hogs.map((hog, index) => {
-        const Icon = APPLIANCE_ICONS[hog.appliance.id];
-        const color = CATEGORY_COLORS[hog.appliance.id];
+        const Icon = getApplianceIcon(hog.appliance.id);
+        const color = getCategoryColor(hog.appliance.id);
         return (
           <div className="card hog-card" key={hog.appliance.id}>
             <div className="hog-card-top">
@@ -26,7 +27,7 @@ export function TopHogsCard({ hogs }: TopHogsCardProps) {
             </div>
             <div className="hog-card-name">{hog.appliance.label}</div>
             <div className="hog-card-metric">
-              {formatKwh(hog.kwh)} &middot; {formatCurrency(hog.cost)}/mo
+              {formatKwh(hog.kwh)} &middot; {formatCost(hog.cost)}/mo
             </div>
             <p className="hog-card-tip">{hog.appliance.tip}</p>
           </div>

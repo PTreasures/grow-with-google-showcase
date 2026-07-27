@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Flame, Gauge, SlidersHorizontal } from "lucide-react";
+import { Flame, Gauge, Menu, SlidersHorizontal, X } from "lucide-react";
 import { BASELINE_PROFILES } from "../data/appliances";
+import { REGIONS } from "../data/regions";
 import type { ThemePreference } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -13,18 +15,58 @@ const NAV_ITEMS = [
 interface TopBarProps {
   baselineId: string;
   onBaselineChange: (id: string) => void;
+  regionId: string;
+  onRegionChange: (id: string) => void;
   theme: ThemePreference;
   onThemeChange: (value: ThemePreference) => void;
 }
 
-export function TopBar({ baselineId, onBaselineChange, theme, onThemeChange }: TopBarProps) {
+export function TopBar({
+  baselineId,
+  onBaselineChange,
+  regionId,
+  onRegionChange,
+  theme,
+  onThemeChange,
+}: TopBarProps) {
   const { pathname } = useLocation();
   const onHome = pathname === "/";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const baselineSelect = (
+    <select
+      className="select select-compact"
+      aria-label="Household profile"
+      value={baselineId}
+      onChange={(event) => onBaselineChange(event.target.value)}
+    >
+      {BASELINE_PROFILES.map((profile) => (
+        <option key={profile.id} value={profile.id}>
+          {profile.label}
+        </option>
+      ))}
+    </select>
+  );
+
+  const regionSelect = (
+    <select
+      className="select select-compact"
+      aria-label="Region (rate and grid mix)"
+      value={regionId}
+      onChange={(event) => onRegionChange(event.target.value)}
+    >
+      {REGIONS.map((region) => (
+        <option key={region.id} value={region.id}>
+          {region.label}
+        </option>
+      ))}
+    </select>
+  );
 
   return (
     <header className="top-bar">
       <div className="top-bar-row">
-        <NavLink to="/" className={onHome ? "brand active" : "brand"}>
+        <NavLink to="/" className={onHome ? "brand active" : "brand"} onClick={() => setMenuOpen(false)}>
           <img src="/favicon.svg" alt="" className="brand-logo" width={20} height={19} />
           Tenant Power Tracker
         </NavLink>
@@ -46,21 +88,47 @@ export function TopBar({ baselineId, onBaselineChange, theme, onThemeChange }: T
         </nav>
 
         <div className="top-bar-controls">
-          <select
-            className="select select-compact"
-            aria-label="Household profile"
-            value={baselineId}
-            onChange={(event) => onBaselineChange(event.target.value)}
-          >
-            {BASELINE_PROFILES.map((profile) => (
-              <option key={profile.id} value={profile.id}>
-                {profile.label}
-              </option>
-            ))}
-          </select>
+          {baselineSelect}
+          {regionSelect}
           <ThemeToggle value={theme} onChange={onThemeChange} />
         </div>
+
+        <button
+          type="button"
+          className="menu-toggle"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X size={20} strokeWidth={1.75} /> : <Menu size={20} strokeWidth={1.75} />}
+        </button>
       </div>
+
+      {menuOpen && (
+        <div className="mobile-menu">
+          <nav className="mobile-nav" aria-label="Primary">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <Icon size={16} strokeWidth={1.75} />
+                  {item.label}
+                </NavLink>
+              );
+            })}
+          </nav>
+          <div className="mobile-controls">
+            {baselineSelect}
+            {regionSelect}
+            <ThemeToggle value={theme} onChange={onThemeChange} />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

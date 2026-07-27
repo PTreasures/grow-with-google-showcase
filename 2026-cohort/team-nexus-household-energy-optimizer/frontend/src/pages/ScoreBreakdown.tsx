@@ -1,7 +1,7 @@
 import { Link, useOutletContext } from "react-router-dom";
-import { DollarSign, Leaf, SlidersHorizontal, Zap } from "lucide-react";
+import { DollarSign, Leaf, Printer, SlidersHorizontal, Zap } from "lucide-react";
 import type { EnergyContext } from "../context";
-import { buildDelta, formatCurrency, formatKwh } from "../lib/calculations";
+import { buildDelta, formatKwh } from "../lib/calculations";
 import { EnergyScoreCard } from "../components/EnergyScoreCard";
 import { StatTile } from "../components/StatTile";
 import { UsageBreakdownBar } from "../components/UsageBreakdownBar";
@@ -10,6 +10,8 @@ export function ScoreBreakdown() {
   const {
     score,
     baselineProfile,
+    region,
+    formatCost,
     userCost,
     defaultCost,
     userKwh,
@@ -26,13 +28,19 @@ export function ScoreBreakdown() {
           <h1>Score &amp; breakdown</h1>
           <p className="page-subtitle">
             Your Personalized Energy Score compares your simulated usage against a regional
-            household baseline.
+            household baseline, using {region.label} utility rates and grid mix.
           </p>
         </div>
-        <Link to="/simulator" className="btn btn-secondary">
-          <SlidersHorizontal size={15} strokeWidth={2} />
-          Continue simulating
-        </Link>
+        <div className="page-header-buttons">
+          <button type="button" className="btn btn-secondary no-print" onClick={() => window.print()}>
+            <Printer size={15} strokeWidth={2} />
+            Print / Save as PDF
+          </button>
+          <Link to="/simulator" className="btn btn-secondary">
+            <SlidersHorizontal size={15} strokeWidth={2} />
+            Continue simulating
+          </Link>
+        </div>
       </div>
 
       <div className="stat-grid">
@@ -40,8 +48,8 @@ export function ScoreBreakdown() {
         <StatTile
           icon={DollarSign}
           label="Monthly cost"
-          value={formatCurrency(userCost)}
-          delta={buildDelta(userCost, defaultCost, formatCurrency)}
+          value={formatCost(userCost)}
+          delta={buildDelta(userCost, defaultCost, formatCost)}
         />
         <StatTile
           icon={Zap}

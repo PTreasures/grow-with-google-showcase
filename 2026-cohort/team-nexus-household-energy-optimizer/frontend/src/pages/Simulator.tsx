@@ -5,8 +5,19 @@ import { SavingsChart } from "../components/SavingsChart";
 import { ScoreSummaryBar } from "../components/ScoreSummaryBar";
 
 export function Simulator() {
-  const { hours, onHoursChange, defaultCost, userCost, score, baselineProfile } =
-    useOutletContext<EnergyContext>();
+  const {
+    hours,
+    onHoursChange,
+    defaultCost,
+    userCost,
+    score,
+    baselineProfile,
+    region,
+    formatCost,
+    customAppliances,
+    onAddCustomAppliance,
+    onRemoveCustomAppliance,
+  } = useOutletContext<EnergyContext>();
 
   return (
     <div className="page">
@@ -14,15 +25,21 @@ export function Simulator() {
         <h1>Usage simulator</h1>
         <p className="page-subtitle">
           Adjust hours per day for each appliance category and watch your monthly cost update
-          live.
+          live. Rates and grid mix are based on {region.label}.
         </p>
       </div>
 
       <ScoreSummaryBar score={score} baselineLabel={baselineProfile.label} />
 
       <div className="main-grid">
-        <UsageSimulator hours={hours} onChange={onHoursChange} />
-        <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} />
+        <UsageSimulator
+          hours={hours}
+          onChange={onHoursChange}
+          customAppliances={customAppliances}
+          onAddCustomAppliance={onAddCustomAppliance}
+          onRemoveCustomAppliance={onRemoveCustomAppliance}
+        />
+        <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} formatCost={formatCost} />
       </div>
     </div>
   );

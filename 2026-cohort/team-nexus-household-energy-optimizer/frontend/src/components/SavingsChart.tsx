@@ -1,8 +1,7 @@
-import { formatCurrency } from "../lib/calculations";
-
 interface SavingsChartProps {
   defaultCost: number;
   simulatedCost: number;
+  formatCost: (value: number) => string;
 }
 
 function niceCeiling(value: number): number {
@@ -19,7 +18,7 @@ function niceCeiling(value: number): number {
 const CHART_HEIGHT = 160;
 const BAR_WIDTH = 24;
 
-export function SavingsChart({ defaultCost, simulatedCost }: SavingsChartProps) {
+export function SavingsChart({ defaultCost, simulatedCost, formatCost }: SavingsChartProps) {
   const maxValue = niceCeiling(Math.max(defaultCost, simulatedCost) * 1.15);
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((fraction) => Math.round(maxValue * fraction));
 
@@ -47,7 +46,7 @@ export function SavingsChart({ defaultCost, simulatedCost }: SavingsChartProps) 
         viewBox={`0 0 ${chartWidth} ${CHART_HEIGHT + 40}`}
         width="100%"
         role="img"
-        aria-label={`Default usage costs ${formatCurrency(defaultCost)} per month. Your scenario costs ${formatCurrency(simulatedCost)} per month.`}
+        aria-label={`Default usage costs ${formatCost(defaultCost)} per month. Your scenario costs ${formatCost(simulatedCost)} per month.`}
       >
         {ticks.map((tick) => {
           const y = CHART_HEIGHT - (tick / maxValue) * CHART_HEIGHT + 10;
@@ -62,7 +61,7 @@ export function SavingsChart({ defaultCost, simulatedCost }: SavingsChartProps) 
                 strokeWidth={1}
               />
               <text x={0} y={y + 4} fontSize={11} fill="var(--text-muted)">
-                {`$${tick}`}
+                {formatCost(tick).replace(/\.\d+/, "")}
               </text>
             </g>
           );
@@ -74,7 +73,7 @@ export function SavingsChart({ defaultCost, simulatedCost }: SavingsChartProps) 
           const barY = CHART_HEIGHT - barHeight + 10;
           return (
             <g key={bar.key} className="chart-bar-group">
-              <title>{`${bar.label}: ${formatCurrency(bar.value)} per month`}</title>
+              <title>{`${bar.label}: ${formatCost(bar.value)} per month`}</title>
               <rect
                 x={barX}
                 y={barY}
@@ -91,7 +90,7 @@ export function SavingsChart({ defaultCost, simulatedCost }: SavingsChartProps) 
                 textAnchor="middle"
                 fill="var(--text-primary)"
               >
-                {formatCurrency(bar.value)}
+                {formatCost(bar.value)}
               </text>
               <text
                 x={barX + BAR_WIDTH / 2}

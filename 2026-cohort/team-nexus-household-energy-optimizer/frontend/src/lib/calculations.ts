@@ -3,7 +3,6 @@ import {
   CARBON_LBS_PER_KWH,
   UTILITY_RATE_PER_KWH,
   type Appliance,
-  type ApplianceCategory,
 } from "../data/appliances";
 
 const DAYS_PER_MONTH = 30;
@@ -26,7 +25,7 @@ export function monthlyCarbonLbs(kwh: number, factor: number = CARBON_LBS_PER_KW
   return kwh * factor;
 }
 
-export type HoursByCategory = Record<ApplianceCategory, number>;
+export type HoursByCategory = Record<string, number>;
 
 export const DEFAULT_HOURS: HoursByCategory = APPLIANCES.reduce((acc, appliance) => {
   acc[appliance.id] = appliance.defaultHours;
@@ -40,15 +39,19 @@ export interface ApplianceBreakdown {
   cost: number;
 }
 
-export function buildBreakdown(hoursByCategory: HoursByCategory): ApplianceBreakdown[] {
-  return APPLIANCES.map((appliance) => {
+export function buildBreakdown(
+  hoursByCategory: HoursByCategory,
+  appliances: Appliance[] = APPLIANCES,
+  rate: number = UTILITY_RATE_PER_KWH,
+): ApplianceBreakdown[] {
+  return appliances.map((appliance) => {
     const hours = clampHours(hoursByCategory[appliance.id], appliance);
     const kwh = monthlyKwh(appliance.watts, hours);
     return {
       appliance,
       hours,
       kwh,
-      cost: monthlyCost(kwh),
+      cost: monthlyCost(kwh, rate),
     };
   });
 }
@@ -73,8 +76,8 @@ export function energyScore(userKwh: number, baselineKwh: number): number {
   return Math.min(100, Math.max(1, Math.round(raw)));
 }
 
-export function formatCurrency(value: number): string {
-  return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+export function formatCurrency(value: number, currency = "USD", locale = "en-US"): string {
+  return value.toLocaleString(locale, { style: "currency", currency });
 }
 
 export function formatKwh(value: number): string {

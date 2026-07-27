@@ -1,5 +1,5 @@
 import type { ApplianceBreakdown } from "../lib/calculations";
-import { CATEGORY_COLORS } from "../lib/categoryColors";
+import { getCategoryColor } from "../lib/categoryColors";
 
 interface UsageBreakdownBarProps {
   breakdown: ApplianceBreakdown[];
@@ -20,7 +20,7 @@ export function UsageBreakdownBar({ breakdown }: UsageBreakdownBarProps) {
             <div
               key={item.appliance.id}
               className="breakdown-segment"
-              style={{ width: `${share * 100}%`, background: CATEGORY_COLORS[item.appliance.id] }}
+              style={{ width: `${share * 100}%`, background: getCategoryColor(item.appliance.id) }}
               title={`${item.appliance.label}: ${Math.round(share * 100)}%`}
             />
           );
@@ -31,7 +31,7 @@ export function UsageBreakdownBar({ breakdown }: UsageBreakdownBarProps) {
           const share = total > 0 ? item.kwh / total : 0;
           return (
             <div className="legend-item" key={item.appliance.id}>
-              <span className="legend-swatch" style={{ background: CATEGORY_COLORS[item.appliance.id] }} />
+              <span className="legend-swatch" style={{ background: getCategoryColor(item.appliance.id) }} />
               {item.appliance.label.split(" (")[0]}
               <span className="breakdown-pct">{Math.round(share * 100)}%</span>
             </div>

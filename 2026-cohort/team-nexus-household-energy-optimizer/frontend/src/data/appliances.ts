@@ -1,13 +1,15 @@
 export type ApplianceCategory = "hvac" | "fridge" | "laundry" | "entertainment";
 
 export interface Appliance {
-  id: ApplianceCategory;
+  /** One of the four built-in categories, or a generated id for a user-added appliance. */
+  id: string;
   label: string;
   watts: number;
   defaultHours: number;
   minHours: number;
   maxHours: number;
   tip: string;
+  custom?: boolean;
 }
 
 /**
@@ -64,9 +66,11 @@ export interface BaselineProfile {
  * profiles until the Data track hands off the real dataset.
  */
 export const BASELINE_PROFILES: BaselineProfile[] = [
+  { id: "studio", label: "Studio", monthlyKwh: 400 },
   { id: "1-bed-apartment", label: "1-bedroom apartment", monthlyKwh: 540 },
   { id: "2-bed-apartment", label: "2-bedroom apartment", monthlyKwh: 780 },
   { id: "3-bed-house", label: "3-bedroom house", monthlyKwh: 1080 },
+  { id: "4-bed-house", label: "4+ bedroom house", monthlyKwh: 1400 },
 ];
 
 export const UTILITY_RATE_PER_KWH = 0.16;

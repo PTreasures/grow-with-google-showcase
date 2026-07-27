@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { BASELINE_PROFILES } from "./data/appliances";
+import { APPLIANCES, BASELINE_PROFILES, type Appliance } from "./data/appliances";
+import { REGIONS } from "./data/regions";
 import {
   DEFAULT_HOURS,
   buildBreakdown,
   energyScore,
+  formatCurrency,
   monthlyCarbonLbs,
   topEnergyHogs,
   totalKwh,
@@ -13,12 +15,20 @@ import {
 import { applyTheme, getStoredTheme, type ThemePreference } from "./lib/theme";
 import { TopBar } from "./components/TopBar";
 import { Footer } from "./components/Footer";
-import type { EnergyContext } from "./context";
+import { PrintableReport } from "./components/PrintableReport";
+import type { EnergyContext, NewApplianceInput } from "./context";
+
+let customApplianceSeq = 0;
 
 export function Layout() {
   const [theme, setTheme] = useState<ThemePreference>(() => getStoredTheme());
-  const [baselineId, setBaselineId] = useState(BASELINE_PROFILES[0].id);
+  const [baselineId, setBaselineId] = useState(
+    BASELINE_PROFILES.find((profile) => profile.id === "1-bed-apartment")?.id ??
+      BASELINE_PROFILES[0].id,
+  );
+  const [regionId, setRegionId] = useState(REGIONS[0].id);
   const [hours, setHours] = useState<HoursByCategory>(DEFAULT_HOURS);
+  const [customAppliances, setCustomAppliances] = useState<Appliance[]>([]);
 
   useEffect(() => {
     applyTheme(theme);
@@ -26,27 +36,68 @@ export function Layout() {
 
   const baselineProfile =
     BASELINE_PROFILES.find((profile) => profile.id === baselineId) ?? BASELINE_PROFILES[0];
+  const region = REGIONS.find((candidate) => candidate.id === regionId) ?? REGIONS[0];
 
-  const defaultBreakdown = useMemo(() => buildBreakdown(DEFAULT_HOURS), []);
-  const userBreakdown = useMemo(() => buildBreakdown(hours), [hours]);
+  const allAppliances = useMemo(() => [...APPLIANCES, ...customAppliances], [customAppliances]);
+
+  const defaultBreakdown = useMemo(
+    () => buildBreakdown(DEFAULT_HOURS, APPLIANCES, region.ratePerKwh),
+    [region.ratePerKwh],
+  );
+  const userBreakdown = useMemo(
+    () => buildBreakdown(hours, allAppliances, region.ratePerKwh),
+    [hours, allAppliances, region.ratePerKwh],
+  );
 
   const defaultCost = defaultBreakdown.reduce((sum, item) => sum + item.cost, 0);
   const userCost = userBreakdown.reduce((sum, item) => sum + item.cost, 0);
   const defaultKwh = totalKwh(defaultBreakdown);
   const userKwh = totalKwh(userBreakdown);
-  const defaultCarbonLbs = monthlyCarbonLbs(defaultKwh);
-  const carbonLbs = monthlyCarbonLbs(userKwh);
+  const defaultCarbonLbs = monthlyCarbonLbs(defaultKwh, region.carbonLbsPerKwh);
+  const carbonLbs = monthlyCarbonLbs(userKwh, region.carbonLbsPerKwh);
   const score = energyScore(userKwh, baselineProfile.monthlyKwh);
   const hogs = topEnergyHogs(userBreakdown, 3);
 
-  function handleHoursChange(category: keyof HoursByCategory, value: number) {
-    setHours((prev) => ({ ...prev, [category]: value }));
+  function formatCost(value: number): string {
+    return formatCurrency(value, region.currency, region.locale);
+  }
+
+  function handleHoursChange(id: string, value: number) {
+    setHours((prev) => ({ ...prev, [id]: value }));
+  }
+
+  function handleAddCustomAppliance(input: NewApplianceInput) {
+    customApplianceSeq += 1;
+    const id = `custom-${customApplianceSeq}`;
+    const appliance: Appliance = {
+      id,
+      label: input.label,
+      watts: input.watts,
+      defaultHours: 1,
+      minHours: 0,
+      maxHours: 24,
+      tip: "Consider cutting its hours or unplugging it when idle, every hour off is a direct saving.",
+      custom: true,
+    };
+    setCustomAppliances((prev) => [...prev, appliance]);
+    setHours((prev) => ({ ...prev, [id]: 1 }));
+  }
+
+  function handleRemoveCustomAppliance(id: string) {
+    setCustomAppliances((prev) => prev.filter((appliance) => appliance.id !== id));
+    setHours((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   const context: EnergyContext = {
     hours,
     onHoursChange: handleHoursChange,
     baselineProfile,
+    region,
+    formatCost,
     defaultBreakdown,
     userBreakdown,
     defaultCost,
@@ -57,6 +108,9 @@ export function Layout() {
     carbonLbs,
     score,
     hogs,
+    customAppliances,
+    onAddCustomAppliance: handleAddCustomAppliance,
+    onRemoveCustomAppliance: handleRemoveCustomAppliance,
   };
 
   return (
@@ -64,6 +118,8 @@ export function Layout() {
       <TopBar
         baselineId={baselineId}
         onBaselineChange={setBaselineId}
+        regionId={regionId}
+        onRegionChange={setRegionId}
         theme={theme}
         onThemeChange={setTheme}
       />
@@ -71,6 +127,17 @@ export function Layout() {
         <Outlet context={context} />
       </main>
       <Footer />
+      <PrintableReport
+        score={score}
+        baselineLabel={baselineProfile.label}
+        regionLabel={region.label}
+        formatCost={formatCost}
+        userCost={userCost}
+        userKwh={userKwh}
+        carbonLbs={carbonLbs}
+        userBreakdown={userBreakdown}
+        hogs={hogs}
+      />
     </div>
   );
 }
