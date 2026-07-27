@@ -24,7 +24,9 @@ export interface EnergyContext {
   carbonLbs: number;
   score: number;
   hogs: ApplianceBreakdown[];
-  customAppliances: Appliance[];
-  onAddCustomAppliance: (input: NewApplianceInput) => void;
-  onRemoveCustomAppliance: (id: string) => void;
+  /** The full live list, built-in and user-added alike, all editable and removable. */
+  appliances: Appliance[];
+  onAddAppliance: (input: NewApplianceInput) => void;
+  onRemoveAppliance: (id: string) => void;
+  onUpdateWatts: (id: string, watts: number) => void;
 }

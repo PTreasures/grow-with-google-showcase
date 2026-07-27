@@ -1,21 +1,27 @@
-import { Moon, Monitor, Sun } from "lucide-react";
+import { BookOpen, Moon, Monitor, Sun } from "lucide-react";
 import type { ThemePreference } from "../lib/theme";
 
 interface ThemeToggleProps {
   value: ThemePreference;
   onChange: (value: ThemePreference) => void;
+  /** The compact top-bar toggle omits Sepia to save space; it's still reachable from the accessibility panel. */
+  includeSepia?: boolean;
 }
 
-const OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
+const BASE_OPTIONS: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
   { value: "system", label: "System theme", icon: Monitor },
   { value: "light", label: "Light theme", icon: Sun },
   { value: "dark", label: "Dark theme", icon: Moon },
 ];
 
-export function ThemeToggle({ value, onChange }: ThemeToggleProps) {
+const SEPIA_OPTION = { value: "sepia" as const, label: "Sepia theme (easier on the eyes)", icon: BookOpen };
+
+export function ThemeToggle({ value, onChange, includeSepia = false }: ThemeToggleProps) {
+  const options = includeSepia ? [...BASE_OPTIONS, SEPIA_OPTION] : BASE_OPTIONS;
+
   return (
     <div className="theme-toggle" role="radiogroup" aria-label="Color theme">
-      {OPTIONS.map((option) => {
+      {options.map((option) => {
         const Icon = option.icon;
         const active = option.value === value;
         return (

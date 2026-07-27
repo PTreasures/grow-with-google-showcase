@@ -13,9 +13,13 @@
     <title>Tenant Power Tracker & Savings Predictor</title>
     <script>
       (function () {
-        var stored = localStorage.getItem("theme");
-        if (stored === "light" || stored === "dark") {
-          document.documentElement.setAttribute("data-theme", stored);
+        var theme = localStorage.getItem("theme");
+        if (theme === "light" || theme === "dark" || theme === "sepia") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+        var textSize = localStorage.getItem("text-size");
+        if (textSize === "small" || textSize === "large" || textSize === "x-large") {
+          document.documentElement.setAttribute("data-text-size", textSize);
         }
       })();
     </script>

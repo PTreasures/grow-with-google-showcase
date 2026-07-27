@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Flame, Gauge, Menu, SlidersHorizontal, X } from "lucide-react";
+import { Accessibility, Flame, Gauge, Menu, SlidersHorizontal, X } from "lucide-react";
 import { BASELINE_PROFILES } from "../data/appliances";
 import { REGIONS } from "../data/regions";
 import type { ThemePreference } from "../lib/theme";
-import { ThemeToggle } from "./ThemeToggle";
+import type { TextSizePreference } from "../lib/textSize";
+import { AccessibilityControls } from "./AccessibilityControls";
 
 const NAV_ITEMS = [
   { to: "/simulator", label: "Simulator", icon: SlidersHorizontal },
@@ -19,6 +20,13 @@ interface TopBarProps {
   onRegionChange: (id: string) => void;
   theme: ThemePreference;
   onThemeChange: (value: ThemePreference) => void;
+  textSize: TextSizePreference;
+  onTextSizeChange: (value: TextSizePreference) => void;
+  isReading: boolean;
+  onReadAloud: () => void;
+  onStopReading: () => void;
+  a11yOpen: boolean;
+  onA11yOpenChange: (open: boolean) => void;
 }
 
 export function TopBar({
@@ -28,6 +36,13 @@ export function TopBar({
   onRegionChange,
   theme,
   onThemeChange,
+  textSize,
+  onTextSizeChange,
+  isReading,
+  onReadAloud,
+  onStopReading,
+  a11yOpen,
+  onA11yOpenChange,
 }: TopBarProps) {
   const { pathname } = useLocation();
   const onHome = pathname === "/";
@@ -90,7 +105,16 @@ export function TopBar({
         <div className="top-bar-controls">
           {baselineSelect}
           {regionSelect}
-          <ThemeToggle value={theme} onChange={onThemeChange} />
+          <button
+            type="button"
+            className="a11y-trigger"
+            aria-label="Display and accessibility settings"
+            aria-haspopup="dialog"
+            aria-expanded={a11yOpen}
+            onClick={() => onA11yOpenChange(true)}
+          >
+            <Accessibility size={18} strokeWidth={1.75} />
+          </button>
         </div>
 
         <button
@@ -125,7 +149,17 @@ export function TopBar({
           <div className="mobile-controls">
             {baselineSelect}
             {regionSelect}
-            <ThemeToggle value={theme} onChange={onThemeChange} />
+          </div>
+          <div className="mobile-a11y">
+            <AccessibilityControls
+              theme={theme}
+              onThemeChange={onThemeChange}
+              textSize={textSize}
+              onTextSizeChange={onTextSizeChange}
+              isReading={isReading}
+              onReadAloud={onReadAloud}
+              onStopReading={onStopReading}
+            />
           </div>
         </div>
       )}

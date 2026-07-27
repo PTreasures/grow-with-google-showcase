@@ -6,6 +6,12 @@ import { EnergyScoreCard } from "../components/EnergyScoreCard";
 import { StatTile } from "../components/StatTile";
 import { UsageBreakdownBar } from "../components/UsageBreakdownBar";
 
+const SCORE_BANDS = [
+  { range: "80-100", label: "Better than baseline", color: "var(--status-good)" },
+  { range: "50-79", label: "Room to improve", color: "var(--status-warning)" },
+  { range: "1-49", label: "High usage", color: "var(--status-critical)" },
+];
+
 export function ScoreBreakdown() {
   const {
     score,
@@ -66,6 +72,27 @@ export function ScoreBreakdown() {
       </div>
 
       <UsageBreakdownBar breakdown={userBreakdown} />
+
+      <div className="card score-explainer">
+        <div className="card-title">How your score is calculated</div>
+        <p className="card-subtitle">
+          Your score compares your simulated monthly usage ({formatKwh(userKwh)}) to the{" "}
+          {baselineProfile.label} baseline ({formatKwh(baselineProfile.monthlyKwh)}). Matching
+          the baseline exactly lands at 100, and every 1% you use above it costs a point, so
+          heavy overages floor out at 1 rather than going negative. Changing your region updates
+          your cost and carbon footprint, but not your score, since the score is purely about
+          how much you use, not what it costs.
+        </p>
+        <div className="score-scale">
+          {SCORE_BANDS.map((band) => (
+            <div className="score-scale-item" key={band.range}>
+              <span className="score-scale-dot" style={{ background: band.color }} />
+              <span className="score-scale-range">{band.range}</span>
+              <span className="score-scale-label">{band.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

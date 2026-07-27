@@ -9,7 +9,6 @@ export interface Appliance {
   minHours: number;
   maxHours: number;
   tip: string;
-  custom?: boolean;
 }
 
 /**

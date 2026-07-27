@@ -14,9 +14,10 @@ export function Simulator() {
     baselineProfile,
     region,
     formatCost,
-    customAppliances,
-    onAddCustomAppliance,
-    onRemoveCustomAppliance,
+    appliances,
+    onAddAppliance,
+    onRemoveAppliance,
+    onUpdateWatts,
   } = useOutletContext<EnergyContext>();
 
   return (
@@ -35,9 +36,10 @@ export function Simulator() {
         <UsageSimulator
           hours={hours}
           onChange={onHoursChange}
-          customAppliances={customAppliances}
-          onAddCustomAppliance={onAddCustomAppliance}
-          onRemoveCustomAppliance={onRemoveCustomAppliance}
+          appliances={appliances}
+          onAddAppliance={onAddAppliance}
+          onRemoveAppliance={onRemoveAppliance}
+          onUpdateWatts={onUpdateWatts}
         />
         <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} formatCost={formatCost} />
       </div>

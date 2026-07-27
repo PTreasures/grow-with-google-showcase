@@ -1,10 +1,10 @@
-export type ThemePreference = "system" | "light" | "dark";
+export type ThemePreference = "system" | "light" | "dark" | "sepia";
 
 const STORAGE_KEY = "theme";
 
 export function getStoredTheme(): ThemePreference {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "light" || stored === "dark" ? stored : "system";
+  return stored === "light" || stored === "dark" || stored === "sepia" ? stored : "system";
 }
 
 export function applyTheme(preference: ThemePreference): void {

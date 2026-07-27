@@ -9,6 +9,14 @@ interface TopHogsCardProps {
 }
 
 export function TopHogsCard({ hogs, formatCost }: TopHogsCardProps) {
+  if (hogs.length === 0) {
+    return (
+      <p className="muted-note">
+        No appliances tracked yet, add one on the Simulator page to see your top energy hogs.
+      </p>
+    );
+  }
+
   return (
     <div className="hogs-grid">
       {hogs.map((hog, index) => {

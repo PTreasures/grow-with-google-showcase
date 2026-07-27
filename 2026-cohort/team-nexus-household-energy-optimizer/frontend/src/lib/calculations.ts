@@ -27,10 +27,15 @@ export function monthlyCarbonLbs(kwh: number, factor: number = CARBON_LBS_PER_KW
 
 export type HoursByCategory = Record<string, number>;
 
-export const DEFAULT_HOURS: HoursByCategory = APPLIANCES.reduce((acc, appliance) => {
-  acc[appliance.id] = appliance.defaultHours;
-  return acc;
-}, {} as HoursByCategory);
+/** Maps each appliance's own default-hours, so it stays correct as appliances are added/removed. */
+export function buildDefaultHours(appliances: Appliance[]): HoursByCategory {
+  return appliances.reduce((acc, appliance) => {
+    acc[appliance.id] = appliance.defaultHours;
+    return acc;
+  }, {} as HoursByCategory);
+}
+
+export const DEFAULT_HOURS: HoursByCategory = buildDefaultHours(APPLIANCES);
 
 export interface ApplianceBreakdown {
   appliance: Appliance;
