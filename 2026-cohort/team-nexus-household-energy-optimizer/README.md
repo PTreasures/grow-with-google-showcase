@@ -71,13 +71,13 @@ team-nexus-household-energy-optimizer/
 │   ├── app.py                # App entry point
 │   ├── requirements.txt      # Python dependencies
 │   └── .env.example          # Environment variable template
+├── docs/                    # Project documentation and reports
 ├── frontend/                 # React + TypeScript app (Vite)
 │   └── src/
 │       ├── data/appliances.ts    # Mock appliance + baseline profile data
 │       ├── lib/calculations.ts   # kWh / cost / carbon / score math
 │       ├── components/           # UsageSimulator, SavingsChart, EnergyScoreCard, TopHogsCard, StatTile
 │       └── App.tsx               # Page layout and state
-├── docs/                    # Project documentation and reports
 ├── .gitignore               # Ignored files (env, deps, build output, etc.)
 ├── LICENSE                  # MIT License
 └── README.md                # Project overview and documentation
@@ -87,15 +87,30 @@ team-nexus-household-energy-optimizer/
 
 ## 7. Setup / Run Instructions
 
+New to running a project locally? Here's what to install first:
+
+- **[Python 3.9+](https://www.python.org/downloads/)** — needed to run the Flask backend
+- **[Node.js 18+](https://nodejs.org/)** (npm comes bundled with it) — needed to run the React frontend
+- **[Git](https://git-scm.com/downloads)** — needed to clone this repository, if you haven't already
+
+Once those are installed, open a terminal and clone the repo (skip this step if you already have the project folder):
+
+```bash
+git clone <this-repo-url>                       # download the project files to your computer
+cd team-nexus-household-energy-optimizer        # move into the project folder
+```
+
+The backend and frontend run as two separate servers, so you'll want two terminal tabs/windows open at the same time, one for each set of steps below.
+
 ### Backend (Flask)
 
 ```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-python app.py
+cd backend                          # move into the backend folder
+python3 -m venv venv                # create an isolated Python environment for this project
+source venv/bin/activate            # activate it (Windows: venv\Scripts\activate)
+pip install -r requirements.txt     # install the Python packages the backend needs
+cp .env.example .env                # copy the environment variable template to a real .env file
+python app.py                       # start the Flask server
 ```
 
 The API will run at `http://127.0.0.1:5000/api/health`. There's no root route, so hit `/api/health` directly, not `/`.
@@ -103,12 +118,12 @@ The API will run at `http://127.0.0.1:5000/api/health`. There's no root route, s
 ### Frontend (React + TypeScript)
 
 ```bash
-cd frontend
-npm install
-npm run dev
+cd frontend        # move into the frontend folder (in your second terminal tab/window)
+npm install         # download the JavaScript packages the frontend needs
+npm run dev         # start the local development server
 ```
 
-Vite will print a local URL (typically `http://localhost:5173`). The app currently runs entirely on mock appliance and baseline data defined in `frontend/src/data/appliances.ts`, no backend connection yet, that's the next step once the Data track's dataset is ready.
+Vite will print a local URL in the terminal (typically `http://localhost:5173`), open it in your browser to view the app. The app currently runs entirely on mock appliance and baseline data defined in `frontend/src/data/appliances.ts`, no backend connection yet, that's the next step once the Data track's dataset is ready.
 
 ---
 
@@ -136,12 +151,12 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 10. Team Members
 
-| Name | Track | Contact | Responsibilities |
-|------|-------|---------|------------------|
-| Ashenafi Demssie | Cybersecurity Track | | |
-| [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Analytics Track | peacek301@gmail.com | |
-| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Track | gyepigarbrahpriscilla@gmail.com | |
-| [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX Design Track | sehr.abrar1@gmail.com | |
+| Name | Role | Contact | MVP Responsibility |
+|------|------|---------|---------------------|
+| Ashenafi Demssie | Cybersecurity Lead | | Security considerations doc, input validation review, dependency audit |
+| [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Lead | peacek301@gmail.com | Dataset cleaning, baseline profiles, calculation functions |
+| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging, demo narrative, social/email ad (stretch) |
+| [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX/UI Lead & Full-Stack/Integration | sehr.abrar1@gmail.com | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
 
 ---
 
