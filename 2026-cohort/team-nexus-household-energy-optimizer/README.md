@@ -18,7 +18,34 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ---
 
-## 3. Grow with Google Resources Used
+## 3. MVP Feature Checklist
+
+Tracking against the team's MVP scope doc. Frontend items below are built and running on mock/placeholder data until the Data track hands off the cleaned dataset.
+
+**Phase 1: Data & Baseline Logic**
+- [ ] Cleaned EIA.gov appliance dataset (CSV/JSON)
+- [ ] 3–5 synthetic tenant baseline profiles from Kaggle benchmarks (frontend currently ships 3 placeholder profiles, to be swapped for real data)
+- [x] Core calculation functions: kWh, cost, carbon footprint (implemented client-side in `frontend/src/lib/calculations.ts`, pending backend parity)
+
+**Phase 2: Core App Features**
+- [x] Usage Simulator: sliders for HVAC, fridge, laundry, entertainment
+- [x] Savings Visualizer: bar chart, default usage vs. your scenario
+- [x] Personalized Energy Score (1–100) vs. regional baseline
+- [x] Top 3 "energy hog" detection with tailored tips
+
+**Phase 3: Integration & Polish**
+- [x] Basic cohesive UI (color palette, typography, metric cards)
+- [x] Edge-case handling: 0 hrs / 24 hrs input doesn't crash or return negative numbers
+- [x] README.md with install steps + requirements.txt
+- [ ] Security Considerations section
+
+**Phase 4: Deployment**
+- [ ] Live public URL
+- [ ] Demo narrative
+
+---
+
+## 4. Grow with Google Resources Used
 
 - Applied Digital Skills
 - Google Cybersecurity Professional Certificate
@@ -28,32 +55,37 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ---
 
-## 4. Tech Stack
+## 5. Tech Stack
 
 - **Backend**: Flask (Python)
-- **Frontend**: React + TypeScript
+- **Frontend**: React + TypeScript (Vite), plain CSS with a shared color/typography system, [lucide-react](https://lucide.dev/) for icons
 - **Deployment**: Render (backend), Netlify/Vercel (frontend) (TBD once we're ready to deploy)
 
 ---
 
-## 5. Project Structure
+## 6. Project Structure
 
 ```bash
 team-nexus-household-energy-optimizer/
-├── backend/               # Flask API
-│   ├── app.py             # App entry point
-│   ├── requirements.txt   # Python dependencies
-│   └── .env.example       # Environment variable template
-├── frontend/              # React + TypeScript app (scaffold pending, see Setup below)
-├── docs/                  # Project documentation and reports
-├── .gitignore             # Ignored files (env, deps, build output, etc.)
-├── LICENSE                # MIT License
-└── README.md              # Project overview and documentation
+├── backend/                 # Flask API
+│   ├── app.py                # App entry point
+│   ├── requirements.txt      # Python dependencies
+│   └── .env.example          # Environment variable template
+├── frontend/                 # React + TypeScript app (Vite)
+│   └── src/
+│       ├── data/appliances.ts    # Mock appliance + baseline profile data
+│       ├── lib/calculations.ts   # kWh / cost / carbon / score math
+│       ├── components/           # UsageSimulator, SavingsChart, EnergyScoreCard, TopHogsCard, StatTile
+│       └── App.tsx               # Page layout and state
+├── docs/                    # Project documentation and reports
+├── .gitignore               # Ignored files (env, deps, build output, etc.)
+├── LICENSE                  # MIT License
+└── README.md                # Project overview and documentation
 ```
 
 ---
 
-## 6. Setup / Run Instructions
+## 7. Setup / Run Instructions
 
 ### Backend (Flask)
 
@@ -66,22 +98,21 @@ cp .env.example .env
 python app.py
 ```
 
-The API will run at `http://localhost:5000`. A `/api/health` route is included as a starting point.
+The API will run at `http://127.0.0.1:5000/api/health`. There's no root route, so hit `/api/health` directly, not `/`.
 
 ### Frontend (React + TypeScript)
 
-Not scaffolded yet. When ready to start:
-
 ```bash
-npm create vite@latest frontend -- --template react-ts
 cd frontend
 npm install
 npm run dev
 ```
 
+Vite will print a local URL (typically `http://localhost:5173`). The app currently runs entirely on mock appliance and baseline data defined in `frontend/src/data/appliances.ts`, no backend connection yet, that's the next step once the Data track's dataset is ready.
+
 ---
 
-## 7. Project Timeline
+## 8. Project Timeline
 
 **Submission Deadline: August 14, 2026**
 
@@ -97,13 +128,13 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 8. Future Ideas
+## 9. Future Ideas
 
 > *Coming soon.*
 
 ---
 
-## 9. Team Members
+## 10. Team Members
 
 | Name | Track | Contact | Responsibilities |
 |------|-------|---------|------------------|
@@ -114,12 +145,12 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 10. Demo
+## 11. Demo
 
 > *Coming soon.*
 
 ---
 
-## 11. License
+## 12. License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
