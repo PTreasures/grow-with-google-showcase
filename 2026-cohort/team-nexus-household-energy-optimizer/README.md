@@ -108,7 +108,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Name | Track | Contact | Responsibilities |
 |------|-------|---------|------------------|
 | Ashenafi Demssie | Cybersecurity Track | | |
-| Peace Kahunde | Data Analytics Track | | |
+| [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Analytics Track | peacek301@gmail.com | |
 | [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Track | gyepigarbrahpriscilla@gmail.com | |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX Design Track | sehr.abrar1@gmail.com | |
 
