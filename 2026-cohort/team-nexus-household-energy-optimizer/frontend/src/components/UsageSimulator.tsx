@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Eraser, Plus, Trash2 } from "lucide-react";
 import type { Appliance } from "../types";
 import type { HoursByCategory } from "../lib/calculations";
 import type { NewApplianceInput } from "../context";
@@ -12,6 +12,9 @@ interface UsageSimulatorProps {
   onAddAppliance: (input: NewApplianceInput) => void;
   onRemoveAppliance: (id: string) => void;
   onUpdateWatts: (id: string, watts: number) => void;
+  onClearAll: () => void;
+  removedBuiltins: Appliance[];
+  onReAddAppliance: (id: string) => void;
 }
 
 interface ApplianceRowProps {
@@ -23,7 +26,7 @@ interface ApplianceRowProps {
 }
 
 function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: ApplianceRowProps) {
-  const Icon = getApplianceIcon(appliance.id);
+  const Icon = getApplianceIcon(appliance.id, appliance.category);
   const [wattsInput, setWattsInput] = useState(String(appliance.watts));
 
   function commitWatts() {
@@ -58,7 +61,9 @@ function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: A
           />
           <span className="watts-unit">W</span>
         </span>
-        <span className="slider-row-value">{hours.toFixed(0)} hrs/day</span>
+        <span className="slider-row-value">
+          {hours > 0 && hours < 1 ? hours.toFixed(2) : hours.toFixed(0)} hrs/day
+        </span>
         <button
           type="button"
           className="slider-row-remove"
@@ -88,6 +93,9 @@ export function UsageSimulator({
   onAddAppliance,
   onRemoveAppliance,
   onUpdateWatts,
+  onClearAll,
+  removedBuiltins,
+  onReAddAppliance,
 }: UsageSimulatorProps) {
   const [newLabel, setNewLabel] = useState("");
   const [newWatts, setNewWatts] = useState("");
@@ -103,9 +111,23 @@ export function UsageSimulator({
     setNewWatts("");
   }
 
+  function handleClearAll() {
+    if (window.confirm("Remove every appliance? You can add them back individually anytime.")) {
+      onClearAll();
+    }
+  }
+
   return (
     <div className="card">
-      <div className="card-title">Usage simulator</div>
+      <div className="card-title-row">
+        <div className="card-title">Usage simulator</div>
+        {appliances.length > 0 && (
+          <button type="button" className="btn btn-secondary btn-small" onClick={handleClearAll}>
+            <Eraser size={13} strokeWidth={2} />
+            Clear all
+          </button>
+        )}
+      </div>
       <p className="card-subtitle">
         Drag each slider to match how many hours a day you actually run it, and correct the
         wattage if your appliance draws differently. Remove anything you don't have.
@@ -123,6 +145,23 @@ export function UsageSimulator({
           onUpdateWatts={onUpdateWatts}
         />
       ))}
+
+      {removedBuiltins.length > 0 && (
+        <div className="appliance-suggestions">
+          <span className="appliance-suggestions-label">Add back:</span>
+          {removedBuiltins.map((appliance) => (
+            <button
+              key={appliance.id}
+              type="button"
+              className="suggestion-chip"
+              onClick={() => onReAddAppliance(appliance.id)}
+            >
+              <Plus size={13} strokeWidth={2} />
+              {appliance.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <form className="add-appliance-form" onSubmit={handleAdd}>
         <div className="add-appliance-fields">

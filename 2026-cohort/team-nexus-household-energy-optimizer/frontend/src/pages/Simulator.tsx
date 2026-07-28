@@ -1,8 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import type { EnergyContext } from "../context";
 import { UsageSimulator } from "../components/UsageSimulator";
 import { SavingsChart } from "../components/SavingsChart";
 import { ScoreSummaryBar } from "../components/ScoreSummaryBar";
+import { MiniScoreCard } from "../components/MiniScoreCard";
+import { StickyColumn } from "../components/StickyColumn";
 
 export function Simulator() {
   const {
@@ -18,7 +21,23 @@ export function Simulator() {
     onAddAppliance,
     onRemoveAppliance,
     onUpdateWatts,
+    onClearAll,
+    removedBuiltins,
+    onReAddAppliance,
   } = useOutletContext<EnergyContext>();
+
+  const scoreBannerRef = useRef<HTMLDivElement>(null);
+  const [scoreBannerVisible, setScoreBannerVisible] = useState(true);
+
+  useEffect(() => {
+    const node = scoreBannerRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => setScoreBannerVisible(entry.isIntersecting), {
+      rootMargin: "-84px 0px 0px 0px", // account for the sticky top bar covering the same slice of viewport
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="page">
@@ -30,7 +49,9 @@ export function Simulator() {
         </p>
       </div>
 
-      <ScoreSummaryBar score={score} baselineLabel={baselineProfile.label} />
+      <div ref={scoreBannerRef}>
+        <ScoreSummaryBar score={score} baselineLabel={baselineProfile.label} />
+      </div>
 
       <div className="main-grid">
         <UsageSimulator
@@ -40,8 +61,16 @@ export function Simulator() {
           onAddAppliance={onAddAppliance}
           onRemoveAppliance={onRemoveAppliance}
           onUpdateWatts={onUpdateWatts}
+          onClearAll={onClearAll}
+          removedBuiltins={removedBuiltins}
+          onReAddAppliance={onReAddAppliance}
         />
-        <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} formatCost={formatCost} />
+        <StickyColumn watch={`${appliances.length}-${scoreBannerVisible}`}>
+          <SavingsChart defaultCost={defaultCost} simulatedCost={userCost} formatCost={formatCost} />
+          {!scoreBannerVisible && (
+            <MiniScoreCard score={score} baselineLabel={baselineProfile.label} />
+          )}
+        </StickyColumn>
       </div>
     </div>
   );
