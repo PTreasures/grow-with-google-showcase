@@ -23,6 +23,10 @@ body {
   --series-green: #008300;
   --series-magenta: #e87ba4;
   --series-yellow: #eda100;
+  --series-aqua: #1baf7a;
+  --series-orange: #eb6834;
+  --series-violet: #4a3aa7;
+  --series-red: #e34948;
 
   --status-good: #0ca30c;
   --status-warning: #fab219;
@@ -67,6 +71,10 @@ body {
     --series-green: #008300;
     --series-magenta: #d55181;
     --series-yellow: #c98500;
+    --series-aqua: #199e70;
+    --series-orange: #d95926;
+    --series-violet: #9085e9;
+    --series-red: #e66767;
 
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
   }
@@ -87,6 +95,10 @@ body {
   --series-green: #008300;
   --series-magenta: #d55181;
   --series-yellow: #c98500;
+  --series-aqua: #199e70;
+  --series-orange: #d95926;
+  --series-violet: #9085e9;
+  --series-red: #e66767;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
@@ -108,6 +120,10 @@ body {
   --series-green: #008300;
   --series-magenta: #e87ba4;
   --series-yellow: #eda100;
+  --series-aqua: #1baf7a;
+  --series-orange: #eb6834;
+  --series-violet: #4a3aa7;
+  --series-red: #e34948;
 
   --shadow-card: 0 1px 2px rgba(59, 47, 38, 0.06), 0 4px 16px rgba(59, 47, 38, 0.06);
 }
