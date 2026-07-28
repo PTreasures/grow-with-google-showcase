@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import type { Appliance, BaselineProfile, Region } from "./types";
-import { fetchApplianceCategories, fetchBaselineProfiles, fetchRegions } from "./lib/api";
+import { fetchAppliances, fetchBaselineProfiles, fetchRegions } from "./lib/api";
 import {
   buildBreakdown,
-  buildDefaultHours,
+  buildProfileHours,
   energyScore,
   formatCurrency,
   monthlyCarbonLbs,
@@ -24,7 +24,7 @@ import type { EnergyContext, NewApplianceInput } from "./context";
 let customApplianceSeq = 0;
 
 interface EnergyData {
-  applianceCategories: Appliance[];
+  catalog: Appliance[];
   baselineProfiles: BaselineProfile[];
   regions: Region[];
 }
@@ -35,9 +35,9 @@ export function Layout() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchApplianceCategories(), fetchBaselineProfiles(), fetchRegions()])
-      .then(([applianceCategories, baselineProfiles, regions]) => {
-        if (!cancelled) setData({ applianceCategories, baselineProfiles, regions });
+    Promise.all([fetchAppliances(), fetchBaselineProfiles(), fetchRegions()])
+      .then(([catalog, baselineProfiles, regions]) => {
+        if (!cancelled) setData({ catalog, baselineProfiles, regions });
       })
       .catch((error: unknown) => {
         if (!cancelled) {
@@ -67,33 +67,30 @@ export function Layout() {
   }
 
   return (
-    <LayoutReady
-      applianceCategories={data.applianceCategories}
-      baselineProfiles={data.baselineProfiles}
-      regions={data.regions}
-    />
+    <LayoutReady catalog={data.catalog} baselineProfiles={data.baselineProfiles} regions={data.regions} />
   );
 }
 
 interface LayoutReadyProps {
-  applianceCategories: Appliance[];
+  catalog: Appliance[];
   baselineProfiles: BaselineProfile[];
   regions: Region[];
 }
 
-function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutReadyProps) {
+function LayoutReady({ catalog, baselineProfiles, regions }: LayoutReadyProps) {
   const { pathname } = useLocation();
   const [theme, setTheme] = useState<ThemePreference>(() => getStoredTheme());
   const [textSize, setTextSize] = useState<TextSizePreference>(() => getStoredTextSize());
   const [a11yOpen, setA11yOpen] = useState(false);
   const [isReading, setIsReading] = useState(false);
-  const [baselineId, setBaselineId] = useState(
-    baselineProfiles.find((profile) => profile.id === "1-bed-apartment")?.id ??
-      baselineProfiles[0].id,
-  );
+  const initialBaselineProfile =
+    baselineProfiles.find((profile) => profile.id === "1-bed-apartment") ?? baselineProfiles[0];
+  const [baselineId, setBaselineId] = useState(initialBaselineProfile.id);
   const [regionId, setRegionId] = useState(regions[0].id);
-  const [appliances, setAppliances] = useState<Appliance[]>(applianceCategories);
-  const [hours, setHours] = useState<HoursByCategory>(() => buildDefaultHours(applianceCategories));
+  const [appliances, setAppliances] = useState<Appliance[]>(catalog);
+  const [hours, setHours] = useState<HoursByCategory>(() =>
+    buildProfileHours(catalog, initialBaselineProfile),
+  );
 
   useEffect(() => {
     applyTheme(theme);
@@ -117,8 +114,8 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
   const region = regions.find((candidate) => candidate.id === regionId) ?? regions[0];
 
   const defaultBreakdown = useMemo(
-    () => buildBreakdown(buildDefaultHours(appliances), appliances, region.ratePerKwh),
-    [appliances, region.ratePerKwh],
+    () => buildBreakdown(buildProfileHours(appliances, baselineProfile), appliances, region.ratePerKwh),
+    [appliances, baselineProfile, region.ratePerKwh],
   );
   const userBreakdown = useMemo(
     () => buildBreakdown(hours, appliances, region.ratePerKwh),
@@ -131,8 +128,10 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
   const userKwh = totalKwh(userBreakdown);
   const defaultCarbonLbs = monthlyCarbonLbs(defaultKwh, region.carbonLbsPerKwh);
   const carbonLbs = monthlyCarbonLbs(userKwh, region.carbonLbsPerKwh);
-  const score = energyScore(userKwh, baselineProfile.monthlyKwh);
+  const score = energyScore(userKwh, defaultKwh);
   const hogs = topEnergyHogs(userBreakdown, 3);
+  const removableIds = new Set(appliances.map((appliance) => appliance.id));
+  const removedBuiltins = catalog.filter((appliance) => !removableIds.has(appliance.id));
 
   function formatCost(value: number): string {
     return formatCurrency(value, region.currency, region.locale);
@@ -140,6 +139,21 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
 
   function handleHoursChange(id: string, value: number) {
     setHours((prev) => ({ ...prev, [id]: value }));
+  }
+
+  /** Switching home size resets the sliders to that profile's typical hours, so the change is actually visible. */
+  function handleBaselineChange(id: string) {
+    setBaselineId(id);
+    const profile = baselineProfiles.find((candidate) => candidate.id === id) ?? baselineProfiles[0];
+    setHours(buildProfileHours(appliances, profile));
+  }
+
+  /** Adds a removed built-in appliance back with its real wattage/tip, no retyping needed. */
+  function handleReAddAppliance(id: string) {
+    const original = catalog.find((appliance) => appliance.id === id);
+    if (!original) return;
+    setAppliances((prev) => [...prev, original]);
+    setHours((prev) => ({ ...prev, [id]: baselineProfile.hoursByAppliance[id] ?? original.defaultHours }));
   }
 
   function handleAddAppliance(input: NewApplianceInput) {
@@ -173,6 +187,12 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
     );
   }
 
+  /** Empties the list entirely. Removed built-ins remain available as one-tap re-add chips. */
+  function handleClearAll() {
+    setAppliances([]);
+    setHours({});
+  }
+
   function handleReadAloud() {
     const text = document.querySelector<HTMLElement>(".page-content")?.innerText ?? "";
     setIsReading(true);
@@ -204,6 +224,9 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
     onAddAppliance: handleAddAppliance,
     onRemoveAppliance: handleRemoveAppliance,
     onUpdateWatts: handleUpdateWatts,
+    onClearAll: handleClearAll,
+    removedBuiltins,
+    onReAddAppliance: handleReAddAppliance,
   };
 
   return (
@@ -211,7 +234,7 @@ function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutR
       <div className="a11y-zoom-scope">
         <TopBar
           baselineId={baselineId}
-          onBaselineChange={setBaselineId}
+          onBaselineChange={handleBaselineChange}
           baselineProfiles={baselineProfiles}
           regionId={regionId}
           onRegionChange={setRegionId}

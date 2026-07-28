@@ -16,7 +16,18 @@ app = Flask(__name__)
 CORS(app)
 
 DEFAULT_REGION_ID = "us-national"
-DEFAULT_BASELINE_ID = "2-bed-apartment"
+DEFAULT_BASELINE_ID = "1-bed-apartment"
+
+
+def resolve_profile_hours(appliances, profile):
+    """A profile only specifies hours for the appliances typical of that home
+    size; anything it doesn't mention falls back to that appliance's own EIA
+    default rather than zeroing out (a laptop doesn't stop existing just
+    because a profile forgot to list it)."""
+    return {
+        appliance["id"]: profile["hours_by_appliance"].get(appliance["id"], appliance["default_hours"])
+        for appliance in appliances
+    }
 
 
 @app.route("/api/health")
@@ -49,14 +60,16 @@ def tenant_profiles():
     return jsonify(data.load_tenant_profiles())
 
 
-@app.route("/api/simulator/appliance-categories")
-def simulator_appliance_categories():
-    return jsonify(data.load_simulator_appliance_categories())
+@app.route("/api/simulator/appliances")
+def simulator_appliances():
+    """Peace's 11 EIA appliances, shaped for the simulator UI (id/watts/hours/category/tip)."""
+    return jsonify(data.load_simulator_appliances())
 
 
 @app.route("/api/simulator/baseline-profiles")
 def simulator_baseline_profiles():
-    return jsonify(data.load_simulator_baseline_profiles())
+    """Peace's 3 tenant profiles, reshaped to hours keyed by simulator appliance id."""
+    return jsonify(data.load_tenant_baseline_profiles())
 
 
 @app.route("/api/regions")
@@ -70,10 +83,14 @@ def simulate():
     Runs the simulator's math server-side, region-aware.
 
     Body: {
-      "hours_by_appliance": {"hvac": 8, "fridge": 24, "laundry": 1, "entertainment": 4},
+      "hours_by_appliance": {"refrigerator": 24, "air-conditioner": 8, ...},
       "region_id": "us-california",     # optional, defaults to us-national
-      "baseline_id": "2-bed-apartment"  # optional, defaults to 2-bed-apartment
+      "baseline_id": "2-bed-apartment"  # optional, defaults to 1-bed-apartment
     }
+
+    The score baseline isn't a flat number - it's what the selected tenant
+    profile's own hours would cost, computed the same way the user's
+    scenario is, so it reflects the same appliances and the same region.
     """
     body = request.get_json(silent=True) or {}
     hours_by_appliance = body.get("hours_by_appliance", {})
@@ -88,11 +105,16 @@ def simulate():
     if baseline is None:
         return jsonify(error=f"Unknown baseline_id '{baseline_id}'"), 400
 
-    appliance_categories = data.load_simulator_appliance_categories()
-    breakdown = build_breakdown(hours_by_appliance, appliance_categories, rate=region["rate_per_kwh"])
+    appliances = data.load_simulator_appliances()
+
+    breakdown = build_breakdown(hours_by_appliance, appliances, rate=region["rate_per_kwh"])
     total_kwh = sum_kwh(breakdown)
     total_cost = total_kwh * region["rate_per_kwh"]
     total_carbon_lbs = calc_carbon(total_kwh, factor=region["carbon_lbs_per_kwh"])
+
+    baseline_hours = resolve_profile_hours(appliances, baseline)
+    baseline_breakdown = build_breakdown(baseline_hours, appliances, rate=region["rate_per_kwh"])
+    baseline_kwh = sum_kwh(baseline_breakdown)
 
     return jsonify(
         region=region,
@@ -102,8 +124,9 @@ def simulate():
         total_cost=round(total_cost, 2),
         total_carbon_lbs=round(total_carbon_lbs, 2),
         top_hogs=top_energy_hogs(breakdown, 3),
-        score=energy_score(total_kwh, baseline["monthly_kwh"]),
-        delta_kwh=build_delta(total_kwh, baseline["monthly_kwh"]),
+        baseline_kwh=round(baseline_kwh, 2),
+        score=energy_score(total_kwh, baseline_kwh),
+        delta_kwh=build_delta(total_kwh, baseline_kwh),
     )
 
 

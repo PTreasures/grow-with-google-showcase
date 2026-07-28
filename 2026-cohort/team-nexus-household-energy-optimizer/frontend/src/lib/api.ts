@@ -1,8 +1,8 @@
-import type { Appliance, BaselineProfile, Region } from "../types";
+import type { Appliance, ApplianceCategory, BaselineProfile, Region } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
 
-interface ApiApplianceCategory {
+interface ApiAppliance {
   id: string;
   label: string;
   watts: number;
@@ -10,12 +10,13 @@ interface ApiApplianceCategory {
   min_hours: number;
   max_hours: number;
   tip: string;
+  category: ApplianceCategory;
 }
 
 interface ApiBaselineProfile {
   id: string;
   label: string;
-  monthly_kwh: number;
+  hours_by_appliance: Record<string, number>;
 }
 
 interface ApiRegion {
@@ -35,9 +36,9 @@ async function getJson<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function fetchApplianceCategories(): Promise<Appliance[]> {
-  const categories = await getJson<ApiApplianceCategory[]>("/api/simulator/appliance-categories");
-  return categories.map((item) => ({
+export async function fetchAppliances(): Promise<Appliance[]> {
+  const appliances = await getJson<ApiAppliance[]>("/api/simulator/appliances");
+  return appliances.map((item) => ({
     id: item.id,
     label: item.label,
     watts: item.watts,
@@ -45,12 +46,17 @@ export async function fetchApplianceCategories(): Promise<Appliance[]> {
     minHours: item.min_hours,
     maxHours: item.max_hours,
     tip: item.tip,
+    category: item.category,
   }));
 }
 
 export async function fetchBaselineProfiles(): Promise<BaselineProfile[]> {
   const profiles = await getJson<ApiBaselineProfile[]>("/api/simulator/baseline-profiles");
-  return profiles.map((item) => ({ id: item.id, label: item.label, monthlyKwh: item.monthly_kwh }));
+  return profiles.map((item) => ({
+    id: item.id,
+    label: item.label,
+    hoursByAppliance: item.hours_by_appliance,
+  }));
 }
 
 export async function fetchRegions(): Promise<Region[]> {

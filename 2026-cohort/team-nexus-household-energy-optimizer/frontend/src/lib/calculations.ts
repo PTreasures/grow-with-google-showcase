@@ -1,4 +1,4 @@
-import type { Appliance } from "../types";
+import type { Appliance, BaselineProfile } from "../types";
 
 const DAYS_PER_MONTH = 30;
 
@@ -22,10 +22,15 @@ export function monthlyCarbonLbs(kwh: number, factor: number): number {
 
 export type HoursByCategory = Record<string, number>;
 
-/** Maps each appliance's own default-hours, so it stays correct as appliances are added/removed. */
-export function buildDefaultHours(appliances: Appliance[]): HoursByCategory {
+/**
+ * Starting-point hours for a home-size profile: uses the profile's own hours
+ * for appliances it specifies, and falls back to that appliance's own
+ * default for anything the profile doesn't mention (a laptop doesn't stop
+ * existing just because a profile forgot to list it).
+ */
+export function buildProfileHours(appliances: Appliance[], profile: BaselineProfile): HoursByCategory {
   return appliances.reduce((acc, appliance) => {
-    acc[appliance.id] = appliance.defaultHours;
+    acc[appliance.id] = profile.hoursByAppliance[appliance.id] ?? appliance.defaultHours;
     return acc;
   }, {} as HoursByCategory);
 }
@@ -68,7 +73,7 @@ export function topEnergyHogs(breakdown: ApplianceBreakdown[], count = 3): Appli
  * so it never crashes into zero or negative territory.
  */
 export function energyScore(userKwh: number, baselineKwh: number): number {
-  if (baselineKwh <= 0) return 1;
+  if (baselineKwh <= 0) return userKwh <= 0 ? 100 : 1;
   const ratio = userKwh / baselineKwh;
   const raw = 100 - (ratio - 1) * 100;
   return Math.min(100, Math.max(1, Math.round(raw)));

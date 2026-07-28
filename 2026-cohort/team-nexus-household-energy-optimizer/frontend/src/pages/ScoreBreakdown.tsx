@@ -77,7 +77,7 @@ export function ScoreBreakdown() {
         <div className="card-title">How your score is calculated</div>
         <p className="card-subtitle">
           Your score compares your simulated monthly usage ({formatKwh(userKwh)}) to the{" "}
-          {baselineProfile.label} baseline ({formatKwh(baselineProfile.monthlyKwh)}). Matching
+          {baselineProfile.label} baseline ({formatKwh(defaultKwh)}). Matching
           the baseline exactly lands at 100, and every 1% you use above it costs a point, so
           heavy overages floor out at 1 rather than going negative. Changing your region updates
           your cost and carbon footprint, but not your score, since the score is purely about
