@@ -10,14 +10,14 @@ def calc_kwh(watts, hours_per_day):
     return watts * hours_per_day * 30 / 1000
 
 
-def calc_cost(kwh):
+def calc_cost(kwh, rate=ELECTRICITY_RATE):
     """Calculate monthly cost in $"""
-    return kwh * ELECTRICITY_RATE
+    return kwh * rate
 
 
-def calc_carbon(kwh):
+def calc_carbon(kwh, factor=CARBON_FACTOR):
     """Calculate monthly CO2 in kg"""
-    return kwh * CARBON_FACTOR
+    return kwh * factor
 
 
 def process_device(device):
@@ -44,3 +44,77 @@ def calculate_home_totals(devices):
         "Total_Monthly_Cost": round(total_cost, 2),
         "Total_Monthly_Carbon": round(total_carbon, 2),
     }
+
+
+# --- Ported from frontend/src/lib/calculations.ts (simulator engine) ---
+# Kept as a Python port so the simulator's math can eventually be served by
+# the backend instead of computed client-side. Presentation-only helpers
+# (currency/kWh string formatting) were left out - that's a display concern
+# for whichever layer renders the response.
+
+
+def clamp_hours(hours, min_hours, max_hours, default_hours):
+    """Clamps hours/day input so edge values (0, 24, negatives, invalid) never crash or go negative."""
+    try:
+        hours = float(hours)
+    except (TypeError, ValueError):
+        return default_hours
+    if hours != hours:  # NaN
+        return default_hours
+    return min(max_hours, max(min_hours, hours))
+
+
+def build_breakdown(hours_by_appliance, appliances, rate=ELECTRICITY_RATE):
+    """
+    Takes {appliance_id: hours_per_day} and a list of appliance dicts
+    (id, watts, default_hours, min_hours, max_hours), and returns
+    per-appliance hours/kWh/cost for the month.
+    """
+    breakdown = []
+    for appliance in appliances:
+        hours = clamp_hours(
+            hours_by_appliance.get(appliance["id"]),
+            appliance["min_hours"],
+            appliance["max_hours"],
+            appliance["default_hours"],
+        )
+        kwh = calc_kwh(appliance["watts"], hours)
+        breakdown.append({
+            "appliance": appliance,
+            "hours": hours,
+            "kwh": kwh,
+            "cost": calc_cost(kwh, rate),
+        })
+    return breakdown
+
+
+def sum_kwh(breakdown):
+    """Total monthly kWh across a breakdown list"""
+    return sum(item["kwh"] for item in breakdown)
+
+
+def top_energy_hogs(breakdown, count=3):
+    """Returns the top N appliances by monthly kWh, highest first"""
+    return sorted(breakdown, key=lambda item: item["kwh"], reverse=True)[:count]
+
+
+def energy_score(user_kwh, baseline_kwh):
+    """
+    Score of 1-100 relative to a regional baseline. Matching the baseline
+    lands at 100; every 1% above baseline usage costs one point, floored at 1
+    so it never crashes into zero or negative territory.
+    """
+    if baseline_kwh <= 0:
+        return 1
+    ratio = user_kwh / baseline_kwh
+    raw = 100 - (ratio - 1) * 100
+    return min(100, max(1, round(raw)))
+
+
+def build_delta(current, base):
+    """Compares a current value to a baseline value, e.g. usage vs default."""
+    diff = current - base
+    if abs(diff) < 0.01:
+        return {"diff": 0, "is_good": True, "direction": "down"}
+    direction = "up" if diff > 0 else "down"
+    return {"diff": diff, "is_good": diff <= 0, "direction": direction}

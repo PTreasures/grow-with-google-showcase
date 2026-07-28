@@ -1,0 +1,7 @@
+[
+  { "id": "studio", "label": "Studio", "monthly_kwh": 400 },
+  { "id": "1-bed-apartment", "label": "1-bedroom apartment", "monthly_kwh": 540 },
+  { "id": "2-bed-apartment", "label": "2-bedroom apartment", "monthly_kwh": 780 },
+  { "id": "3-bed-house", "label": "3-bedroom house", "monthly_kwh": 1080 },
+  { "id": "4-bed-house", "label": "4+ bedroom house", "monthly_kwh": 1400 }
+]
