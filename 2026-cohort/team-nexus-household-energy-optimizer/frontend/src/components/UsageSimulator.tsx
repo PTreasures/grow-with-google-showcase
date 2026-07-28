@@ -114,7 +114,9 @@ function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts, onU
           onClick={toggleUnit}
           title={isWeek ? `≈ ${hours.toFixed(2)} hrs/day, click to switch to /day` : "Click to switch to /week"}
         >
-          {isWeek ? `${sliderValue} hrs/wk` : `${hours > 0 && hours < 1 ? hours.toFixed(2) : hours.toFixed(0)} hrs/day`}
+          <span className="slider-row-value-text">
+            {isWeek ? `${sliderValue} hrs/wk` : `${hours > 0 && hours < 1 ? hours.toFixed(2) : hours.toFixed(0)} hrs/day`}
+          </span>
         </button>
         <button
           type="button"

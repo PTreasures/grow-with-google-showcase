@@ -762,14 +762,22 @@
   background: transparent;
   padding: 0;
   cursor: pointer;
-  border-bottom: 1px dashed transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .slider-row-value-toggle:hover,
 .slider-row-value-toggle:focus-visible {
   color: var(--text-primary);
-  border-bottom-color: var(--text-muted);
+}
+
+.slider-row-value-text {
+  border-bottom: 1px dashed var(--text-muted);
+  transition: border-color 0.15s ease;
+}
+
+.slider-row-value-toggle:hover .slider-row-value-text,
+.slider-row-value-toggle:focus-visible .slider-row-value-text {
+  border-bottom-color: var(--text-primary);
 }
 
 .qty-field {
