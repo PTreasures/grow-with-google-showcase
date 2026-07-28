@@ -12,6 +12,11 @@ export function monthlyKwh(watts: number, hoursPerDay: number): number {
   return (watts * hoursPerDay * DAYS_PER_MONTH) / 1000;
 }
 
+/** Per-unit watts times how many identical units the user has (e.g. 2 TVs). */
+export function effectiveWatts(appliance: Appliance): number {
+  return appliance.watts * (appliance.quantity ?? 1);
+}
+
 export function monthlyCost(kwh: number, rate: number): number {
   return kwh * rate;
 }
@@ -49,7 +54,7 @@ export function buildBreakdown(
 ): ApplianceBreakdown[] {
   return appliances.map((appliance) => {
     const hours = clampHours(hoursByCategory[appliance.id], appliance);
-    const kwh = monthlyKwh(appliance.watts, hours);
+    const kwh = monthlyKwh(effectiveWatts(appliance), hours);
     return {
       appliance,
       hours,

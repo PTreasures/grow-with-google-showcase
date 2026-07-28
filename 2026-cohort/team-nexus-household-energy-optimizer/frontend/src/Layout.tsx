@@ -187,6 +187,12 @@ function LayoutReady({ catalog, baselineProfiles, regions }: LayoutReadyProps) {
     );
   }
 
+  function handleUpdateQuantity(id: string, quantity: number) {
+    setAppliances((prev) =>
+      prev.map((appliance) => (appliance.id === id ? { ...appliance, quantity } : appliance)),
+    );
+  }
+
   /** Empties the list entirely. Removed built-ins remain available as one-tap re-add chips. */
   function handleClearAll() {
     setAppliances([]);
@@ -224,6 +230,7 @@ function LayoutReady({ catalog, baselineProfiles, regions }: LayoutReadyProps) {
     onAddAppliance: handleAddAppliance,
     onRemoveAppliance: handleRemoveAppliance,
     onUpdateWatts: handleUpdateWatts,
+    onUpdateQuantity: handleUpdateQuantity,
     onClearAll: handleClearAll,
     removedBuiltins,
     onReAddAppliance: handleReAddAppliance,

@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { scoreStatus } from "../lib/scoreStatus";
 
@@ -32,6 +33,7 @@ export function MiniScoreCard({ score, baselineLabel }: MiniScoreCardProps) {
       >
         {status.label}
       </span>
+      <ChevronRight className="mini-score-chevron" size={16} strokeWidth={2} />
     </Link>
   );
 }

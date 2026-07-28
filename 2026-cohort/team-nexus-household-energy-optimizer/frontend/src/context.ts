@@ -28,6 +28,7 @@ export interface EnergyContext {
   onAddAppliance: (input: NewApplianceInput) => void;
   onRemoveAppliance: (id: string) => void;
   onUpdateWatts: (id: string, watts: number) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
   onClearAll: () => void;
   /** Built-in appliances the user removed, offered back as one-tap re-add suggestions. */
   removedBuiltins: Appliance[];

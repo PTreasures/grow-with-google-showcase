@@ -12,6 +12,8 @@ export interface Appliance {
   tip: string;
   /** Built-in appliances carry Peace's category, used for icon/color grouping. Custom appliances have none. */
   category?: ApplianceCategory;
+  /** How many identical units the user has (e.g. 2 TVs). Undefined behaves as 1. */
+  quantity?: number;
 }
 
 export interface BaselineProfile {

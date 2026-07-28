@@ -21,6 +21,7 @@ export function Simulator() {
     onAddAppliance,
     onRemoveAppliance,
     onUpdateWatts,
+    onUpdateQuantity,
     onClearAll,
     removedBuiltins,
     onReAddAppliance,
@@ -44,8 +45,8 @@ export function Simulator() {
       <div className="page-header">
         <h1>Usage simulator</h1>
         <p className="page-subtitle">
-          Adjust hours per day for each appliance category and watch your monthly cost update
-          live. Rates and grid mix are based on {region.label}.
+          Adjust how much you actually run each appliance, per day or per week, and watch your
+          monthly cost update live. Rates and grid mix are based on {region.label}.
         </p>
       </div>
 
@@ -61,6 +62,7 @@ export function Simulator() {
           onAddAppliance={onAddAppliance}
           onRemoveAppliance={onRemoveAppliance}
           onUpdateWatts={onUpdateWatts}
+          onUpdateQuantity={onUpdateQuantity}
           onClearAll={onClearAll}
           removedBuiltins={removedBuiltins}
           onReAddAppliance={onReAddAppliance}
