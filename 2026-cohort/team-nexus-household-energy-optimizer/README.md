@@ -20,12 +20,12 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ## 3. MVP Feature Checklist
 
-Tracking against the team's MVP scope doc. Frontend items below are built and running on mock/placeholder data until the Data track hands off the cleaned dataset.
+Tracking against the team's MVP scope doc. The frontend now runs on real data served by the backend, not mock/placeholder data.
 
 **Phase 1: Data & Baseline Logic**
-- [ ] Cleaned EIA.gov appliance dataset (CSV/JSON)
-- [ ] 3–5 synthetic tenant baseline profiles from Kaggle benchmarks (frontend currently ships 3 placeholder profiles, to be swapped for real data)
-- [x] Core calculation functions: kWh, cost, carbon footprint (implemented client-side in `frontend/src/lib/calculations.ts`, pending backend parity)
+- [x] Cleaned EIA.gov appliance dataset (CSV/JSON) - `data/eia_appliances.csv`, served via `/api/appliances` and `/api/simulator/appliances`
+- [x] 3–5 synthetic tenant baseline profiles from Kaggle benchmarks - `data/tenant_profiles.json` (1-Bed / 2-Bed / 3-Bed), served via `/api/simulator/baseline-profiles`
+- [x] Core calculation functions: kWh, cost, carbon footprint - implemented in `frontend/src/lib/calculations.ts` (drives the live simulator) with a matching Python port in `backend/calculations.py` (served via `/api/simulate` for parity)
 
 **Phase 2: Core App Features**
 - [x] Usage Simulator: sliders for HVAC, fridge, laundry, entertainment
@@ -67,20 +67,30 @@ Tracking against the team's MVP scope doc. Frontend items below are built and ru
 
 ```bash
 team-nexus-household-energy-optimizer/
-├── backend/                 # Flask API
-│   ├── app.py                # App entry point
-│   ├── requirements.txt      # Python dependencies
-│   └── .env.example          # Environment variable template
-├── docs/                    # Project documentation and reports
-├── frontend/                 # React + TypeScript app (Vite)
+├── backend/                        # Flask API
+│   ├── app.py                       # Routes: appliances, tenant profiles, regions, /api/simulate
+│   ├── data.py                      # Loads/reshapes the datasets in data/ for the API and simulator
+│   ├── calculations.py              # kWh / cost / carbon / score math (Python port of the frontend engine)
+│   ├── requirements.txt             # Python dependencies
+│   └── .env.example                 # Environment variable template
+├── data/                           # Peace's cleaned datasets, consumed by backend/data.py
+│   ├── eia_appliances.csv           # 11 appliances: watts, default hours/day, category
+│   ├── tenant_profiles.json         # 3 baseline profiles (1-Bed / 2-Bed / 3-Bed)
+│   └── regions.json                 # Rate/carbon table across 15 regions
+├── docs/                           # Project documentation and reports (e.g. user-research.md)
+├── frontend/                       # React + TypeScript app (Vite)
+│   ├── .env.example                 # VITE_API_URL template
 │   └── src/
-│       ├── data/appliances.ts    # Mock appliance + baseline profile data
-│       ├── lib/calculations.ts   # kWh / cost / carbon / score math
-│       ├── components/           # UsageSimulator, SavingsChart, EnergyScoreCard, TopHogsCard, StatTile
-│       └── App.tsx               # Page layout and state
-├── .gitignore               # Ignored files (env, deps, build output, etc.)
-├── LICENSE                  # MIT License
-└── README.md                # Project overview and documentation
+│       ├── main.tsx, App.tsx         # App entry point and route definitions
+│       ├── Layout.tsx                # Shared shell + all simulator/session state
+│       ├── context.ts                # Shape of the state Layout hands down to pages
+│       ├── types.ts                  # Appliance / BaselineProfile / Region shapes
+│       ├── pages/                    # Home, Simulator, ScoreBreakdown, EnergyHogs
+│       ├── components/               # UsageSimulator, SavingsChart, EnergyScoreCard, TopHogsCard, StatTile, accessibility panel, etc.
+│       └── lib/                      # calculations.ts, api.ts, theme/textSize/readAloud, applianceColors, scoreStatus
+├── .gitignore                      # Ignored files (env, deps, build output, etc.)
+├── LICENSE                         # MIT License
+└── README.md                       # Project overview and documentation
 ```
 
 ---
@@ -113,17 +123,18 @@ cp .env.example .env                # copy the environment variable template to 
 python app.py                       # start the Flask server
 ```
 
-The API will run at `http://127.0.0.1:5000/api/health`. There's no root route, so hit `/api/health` directly, not `/`.
+The API will run at `http://127.0.0.1:5050/api/health`. There's no root route, so hit `/api/health` directly, not `/`.
 
 ### Frontend (React + TypeScript)
 
 ```bash
-cd frontend        # move into the frontend folder (in your second terminal tab/window)
-npm install         # download the JavaScript packages the frontend needs
-npm run dev         # start the local development server
+cd frontend         # move into the frontend folder (in your second terminal tab/window)
+npm install          # download the JavaScript packages the frontend needs
+cp .env.example .env # points the frontend at the backend above (VITE_API_URL)
+npm run dev          # start the local development server
 ```
 
-Vite will print a local URL in the terminal (typically `http://localhost:5173`), open it in your browser to view the app. The app currently runs entirely on mock appliance and baseline data defined in `frontend/src/data/appliances.ts`, no backend connection yet, that's the next step once the Data track's dataset is ready.
+Vite will print a local URL in the terminal (typically `http://localhost:5173`), open it in your browser to view the app. The frontend fetches its appliance, baseline profile, and region data live from the backend started above, so both servers need to be running.
 
 ---
 

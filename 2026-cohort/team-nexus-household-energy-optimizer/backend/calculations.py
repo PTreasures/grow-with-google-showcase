@@ -1,28 +1,22 @@
-# calculations.py
-# Tenant Power Tracker - Calculations v2
-
-ELECTRICITY_RATE = 0.16  # $ per kWh - US average
-CARBON_FACTOR = 0.4  # kg CO2 per kWh
+ELECTRICITY_RATE = 0.16  # $ per kWh - US average, used where no region is specified
+CARBON_FACTOR = 0.4  # kg CO2 per kWh, used where no region is specified
 
 
 def calc_kwh(watts, hours_per_day):
-    """Calculate monthly kWh"""
     return watts * hours_per_day * 30 / 1000
 
 
 def calc_cost(kwh, rate=ELECTRICITY_RATE):
-    """Calculate monthly cost in $"""
     return kwh * rate
 
 
 def calc_carbon(kwh, factor=CARBON_FACTOR):
-    """Calculate monthly CO2 in kg"""
     return kwh * factor
 
 
 def process_device(device):
-    """Takes an appliance dict (Appliance, Avg_Watts, Default_Hours_Per_Day)
-    and returns it with Monthly_kWh, Monthly_Cost, Monthly_Carbon added"""
+    """Mutates and returns the given appliance dict with Monthly_kWh,
+    Monthly_Cost, and Monthly_Carbon added."""
     kwh = calc_kwh(device["Avg_Watts"], device["Default_Hours_Per_Day"])
     device["Monthly_kWh"] = round(kwh, 2)
     device["Monthly_Cost"] = round(calc_cost(kwh), 2)
@@ -31,7 +25,6 @@ def process_device(device):
 
 
 def calculate_home_totals(devices):
-    """Takes a list of appliance dicts and returns whole-home monthly totals"""
     total_kwh = total_cost = total_carbon = 0
     for device in devices:
         processed = process_device(device)
@@ -46,11 +39,11 @@ def calculate_home_totals(devices):
     }
 
 
-# --- Ported from frontend/src/lib/calculations.ts (simulator engine) ---
-# Kept as a Python port so the simulator's math can eventually be served by
-# the backend instead of computed client-side. Presentation-only helpers
-# (currency/kWh string formatting) were left out - that's a display concern
-# for whichever layer renders the response.
+# --- Simulator engine, mirrored from frontend/src/lib/calculations.ts ---
+# The frontend runs this same math client-side for live slider feedback;
+# this copy is what backs /api/simulate so a non-JS caller gets identical
+# numbers. Presentation-only helpers (currency/kWh string formatting) were
+# left out - that's a display concern for whichever layer renders the response.
 
 
 def clamp_hours(hours, min_hours, max_hours, default_hours):
@@ -89,12 +82,10 @@ def build_breakdown(hours_by_appliance, appliances, rate=ELECTRICITY_RATE):
 
 
 def sum_kwh(breakdown):
-    """Total monthly kWh across a breakdown list"""
     return sum(item["kwh"] for item in breakdown)
 
 
 def top_energy_hogs(breakdown, count=3):
-    """Returns the top N appliances by monthly kWh, highest first"""
     return sorted(breakdown, key=lambda item: item["kwh"], reverse=True)[:count]
 
 
@@ -112,7 +103,8 @@ def energy_score(user_kwh, baseline_kwh):
 
 
 def build_delta(current, base):
-    """Compares a current value to a baseline value, e.g. usage vs default."""
+    """Compares current to base (e.g. usage vs default) and returns
+    {diff, is_good, direction} for a stat tile's delta badge."""
     diff = current - base
     if abs(diff) < 0.01:
         return {"diff": 0, "is_good": True, "direction": "down"}
