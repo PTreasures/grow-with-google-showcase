@@ -1021,6 +1021,9 @@ input[type="range"]::-moz-range-thumb {
   gap: 12px;
   padding: 12px 16px;
   margin-top: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .mini-score-value {

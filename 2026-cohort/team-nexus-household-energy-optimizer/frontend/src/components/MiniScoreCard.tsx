@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { scoreStatus } from "../lib/scoreStatus";
 
 interface MiniScoreCardProps {
@@ -10,7 +11,11 @@ export function MiniScoreCard({ score, baselineLabel }: MiniScoreCardProps) {
   const status = scoreStatus(score);
 
   return (
-    <div className="card mini-score-card">
+    <Link
+      to="/score"
+      className="card mini-score-card"
+      aria-label={`Energy score ${score} out of 100, vs ${baselineLabel}. See your full breakdown.`}
+    >
       <span className="mini-score-value" style={{ color: status.color }}>
         {score}
       </span>
@@ -27,6 +32,6 @@ export function MiniScoreCard({ score, baselineLabel }: MiniScoreCardProps) {
       >
         {status.label}
       </span>
-    </div>
+    </Link>
   );
 }
