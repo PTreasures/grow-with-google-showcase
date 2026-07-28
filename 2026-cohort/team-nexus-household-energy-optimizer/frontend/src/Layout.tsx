@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { APPLIANCES, BASELINE_PROFILES, type Appliance } from "./data/appliances";
-import { REGIONS } from "./data/regions";
+import type { Appliance, BaselineProfile, Region } from "./types";
+import { fetchApplianceCategories, fetchBaselineProfiles, fetchRegions } from "./lib/api";
 import {
   buildBreakdown,
   buildDefaultHours,
@@ -23,19 +23,77 @@ import type { EnergyContext, NewApplianceInput } from "./context";
 
 let customApplianceSeq = 0;
 
+interface EnergyData {
+  applianceCategories: Appliance[];
+  baselineProfiles: BaselineProfile[];
+  regions: Region[];
+}
+
 export function Layout() {
+  const [data, setData] = useState<EnergyData | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([fetchApplianceCategories(), fetchBaselineProfiles(), fetchRegions()])
+      .then(([applianceCategories, baselineProfiles, regions]) => {
+        if (!cancelled) setData({ applianceCategories, baselineProfiles, regions });
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : "Failed to load energy data.");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loadError) {
+    return (
+      <div className="loading-state">
+        <p>Couldn&rsquo;t reach the Tenant Power Tracker backend.</p>
+        <p className="loading-state-detail">{loadError}</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="loading-state">
+        <p>Loading your energy data&hellip;</p>
+      </div>
+    );
+  }
+
+  return (
+    <LayoutReady
+      applianceCategories={data.applianceCategories}
+      baselineProfiles={data.baselineProfiles}
+      regions={data.regions}
+    />
+  );
+}
+
+interface LayoutReadyProps {
+  applianceCategories: Appliance[];
+  baselineProfiles: BaselineProfile[];
+  regions: Region[];
+}
+
+function LayoutReady({ applianceCategories, baselineProfiles, regions }: LayoutReadyProps) {
   const { pathname } = useLocation();
   const [theme, setTheme] = useState<ThemePreference>(() => getStoredTheme());
   const [textSize, setTextSize] = useState<TextSizePreference>(() => getStoredTextSize());
   const [a11yOpen, setA11yOpen] = useState(false);
   const [isReading, setIsReading] = useState(false);
   const [baselineId, setBaselineId] = useState(
-    BASELINE_PROFILES.find((profile) => profile.id === "1-bed-apartment")?.id ??
-      BASELINE_PROFILES[0].id,
+    baselineProfiles.find((profile) => profile.id === "1-bed-apartment")?.id ??
+      baselineProfiles[0].id,
   );
-  const [regionId, setRegionId] = useState(REGIONS[0].id);
-  const [appliances, setAppliances] = useState<Appliance[]>(APPLIANCES);
-  const [hours, setHours] = useState<HoursByCategory>(() => buildDefaultHours(APPLIANCES));
+  const [regionId, setRegionId] = useState(regions[0].id);
+  const [appliances, setAppliances] = useState<Appliance[]>(applianceCategories);
+  const [hours, setHours] = useState<HoursByCategory>(() => buildDefaultHours(applianceCategories));
 
   useEffect(() => {
     applyTheme(theme);
@@ -55,8 +113,8 @@ export function Layout() {
   }, []);
 
   const baselineProfile =
-    BASELINE_PROFILES.find((profile) => profile.id === baselineId) ?? BASELINE_PROFILES[0];
-  const region = REGIONS.find((candidate) => candidate.id === regionId) ?? REGIONS[0];
+    baselineProfiles.find((profile) => profile.id === baselineId) ?? baselineProfiles[0];
+  const region = regions.find((candidate) => candidate.id === regionId) ?? regions[0];
 
   const defaultBreakdown = useMemo(
     () => buildBreakdown(buildDefaultHours(appliances), appliances, region.ratePerKwh),
@@ -154,8 +212,10 @@ export function Layout() {
         <TopBar
           baselineId={baselineId}
           onBaselineChange={setBaselineId}
+          baselineProfiles={baselineProfiles}
           regionId={regionId}
           onRegionChange={setRegionId}
+          regions={regions}
           theme={theme}
           onThemeChange={setTheme}
           textSize={textSize}

@@ -1,5 +1,4 @@
-import type { Appliance, BaselineProfile } from "./data/appliances";
-import type { Region } from "./data/regions";
+import type { Appliance, BaselineProfile, Region } from "./types";
 import type { ApplianceBreakdown, HoursByCategory } from "./lib/calculations";
 
 export interface NewApplianceInput {

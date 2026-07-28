@@ -2,6 +2,23 @@
   min-height: 100vh;
 }
 
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 100vh;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loading-state-detail {
+  font-size: 13px;
+  color: var(--status-critical);
+}
+
 /* Everything except the accessibility panel lives in here, so the panel
    itself never inherits the accessibility zoom scale (fixed-position
    overlays and CSS zoom don't compose reliably). */

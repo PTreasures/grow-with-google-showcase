@@ -1,4 +1,4 @@
-import type { ApplianceCategory } from "../data/appliances";
+import type { ApplianceCategory } from "../types";
 
 const CATEGORY_COLORS: Record<ApplianceCategory, string> = {
   hvac: "var(--series-blue)",

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import type { Appliance } from "../data/appliances";
+import type { Appliance } from "../types";
 import type { HoursByCategory } from "../lib/calculations";
 import type { NewApplianceInput } from "../context";
 import { getApplianceIcon } from "./applianceIcons";

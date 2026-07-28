@@ -1,9 +1,4 @@
-import {
-  APPLIANCES,
-  CARBON_LBS_PER_KWH,
-  UTILITY_RATE_PER_KWH,
-  type Appliance,
-} from "../data/appliances";
+import type { Appliance } from "../types";
 
 const DAYS_PER_MONTH = 30;
 
@@ -17,11 +12,11 @@ export function monthlyKwh(watts: number, hoursPerDay: number): number {
   return (watts * hoursPerDay * DAYS_PER_MONTH) / 1000;
 }
 
-export function monthlyCost(kwh: number, rate: number = UTILITY_RATE_PER_KWH): number {
+export function monthlyCost(kwh: number, rate: number): number {
   return kwh * rate;
 }
 
-export function monthlyCarbonLbs(kwh: number, factor: number = CARBON_LBS_PER_KWH): number {
+export function monthlyCarbonLbs(kwh: number, factor: number): number {
   return kwh * factor;
 }
 
@@ -35,8 +30,6 @@ export function buildDefaultHours(appliances: Appliance[]): HoursByCategory {
   }, {} as HoursByCategory);
 }
 
-export const DEFAULT_HOURS: HoursByCategory = buildDefaultHours(APPLIANCES);
-
 export interface ApplianceBreakdown {
   appliance: Appliance;
   hours: number;
@@ -46,8 +39,8 @@ export interface ApplianceBreakdown {
 
 export function buildBreakdown(
   hoursByCategory: HoursByCategory,
-  appliances: Appliance[] = APPLIANCES,
-  rate: number = UTILITY_RATE_PER_KWH,
+  appliances: Appliance[],
+  rate: number,
 ): ApplianceBreakdown[] {
   return appliances.map((appliance) => {
     const hours = clampHours(hoursByCategory[appliance.id], appliance);

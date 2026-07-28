@@ -6,7 +6,7 @@ import {
   WashingMachine,
   type LucideIcon,
 } from "lucide-react";
-import type { ApplianceCategory } from "../data/appliances";
+import type { ApplianceCategory } from "../types";
 
 const APPLIANCE_ICONS: Record<ApplianceCategory, LucideIcon> = {
   hvac: Thermometer,
