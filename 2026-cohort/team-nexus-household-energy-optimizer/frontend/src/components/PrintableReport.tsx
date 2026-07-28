@@ -61,7 +61,7 @@ export function PrintableReport({
         </div>
       </div>
 
-      <div className="print-section-title">Usage by category</div>
+      <div className="print-section-title">Usage by appliance</div>
       <table className="print-table">
         <thead>
           <tr>
@@ -75,7 +75,7 @@ export function PrintableReport({
           {userBreakdown.map((item) => (
             <tr key={item.appliance.id}>
               <td>{item.appliance.label}</td>
-              <td>{item.hours.toFixed(0)}</td>
+              <td>{item.hours > 0 && item.hours < 1 ? item.hours.toFixed(2) : item.hours.toFixed(0)}</td>
               <td>{item.kwh.toFixed(0)}</td>
               <td>{formatCost(item.cost)}</td>
             </tr>

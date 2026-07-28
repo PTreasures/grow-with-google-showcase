@@ -105,7 +105,7 @@ def energy_score(user_kwh, baseline_kwh):
     so it never crashes into zero or negative territory.
     """
     if baseline_kwh <= 0:
-        return 1
+        return 100 if user_kwh <= 0 else 1
     ratio = user_kwh / baseline_kwh
     raw = 100 - (ratio - 1) * 100
     return min(100, max(1, round(raw)))
