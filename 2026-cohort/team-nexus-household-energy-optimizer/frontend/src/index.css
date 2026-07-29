@@ -40,19 +40,19 @@ body {
   --shadow-card: 0 1px 2px rgba(11, 11, 11, 0.04), 0 4px 16px rgba(11, 11, 11, 0.04);
 
   /* Accessibility text-size control. Overridden by a data-text-size attribute; see lib/textSize.ts. */
-  --a11y-zoom: 1;
+  --a11y-zoom: 1.08;
 }
 
 :root[data-text-size="small"] {
-  --a11y-zoom: 0.875;
+  --a11y-zoom: 0.95;
 }
 
 :root[data-text-size="large"] {
-  --a11y-zoom: 1.15;
+  --a11y-zoom: 1.25;
 }
 
 :root[data-text-size="x-large"] {
-  --a11y-zoom: 1.3;
+  --a11y-zoom: 1.4;
 }
 
 @media (prefers-color-scheme: dark) {
