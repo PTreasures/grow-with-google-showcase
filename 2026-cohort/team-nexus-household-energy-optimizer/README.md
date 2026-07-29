@@ -59,7 +59,7 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 
 - **Backend**: Flask (Python)
 - **Frontend**: React + TypeScript (Vite), plain CSS with a shared color/typography system, [lucide-react](https://lucide.dev/) for icons
-- **Deployment**: Render (backend), Netlify/Vercel (frontend) (TBD once we're ready to deploy)
+- **Deployment**: Render (backend web service + frontend static site)
 
 ---
 
