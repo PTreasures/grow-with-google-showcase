@@ -123,7 +123,7 @@ cp .env.example .env                # copy the environment variable template to 
 python app.py                       # start the Flask server
 ```
 
-The API will run at `http://127.0.0.1:5050/api/health`. There's no root route, so hit `/api/health` directly, not `/`.
+The API will run at `http://127.0.0.1:5050/api/health` (the root `/` just returns a small pointer message, no actual UI lives there).
 
 ### Frontend (React + TypeScript)
 

@@ -30,6 +30,11 @@ def resolve_profile_hours(appliances, profile):
     }
 
 
+@app.route("/")
+def index():
+    return jsonify(message="Tenant Power Tracker API - see /api/health")
+
+
 @app.route("/api/health")
 def health():
     return jsonify(status="ok")
