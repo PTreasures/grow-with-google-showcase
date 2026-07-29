@@ -1,6 +1,6 @@
 import type { ApplianceBreakdown } from "../lib/calculations";
 import { formatKwh } from "../lib/calculations";
-import { getCategoryColor } from "../lib/categoryColors";
+import { getApplianceColor } from "../lib/applianceColors";
 import { getApplianceIcon } from "./applianceIcons";
 
 interface TopHogsCardProps {
@@ -20,8 +20,8 @@ export function TopHogsCard({ hogs, formatCost }: TopHogsCardProps) {
   return (
     <div className="hogs-grid">
       {hogs.map((hog, index) => {
-        const Icon = getApplianceIcon(hog.appliance.id);
-        const color = getCategoryColor(hog.appliance.id);
+        const Icon = getApplianceIcon(hog.appliance.id, hog.appliance.category);
+        const color = getApplianceColor(hog.appliance.id);
         return (
           <div className="card hog-card" key={hog.appliance.id}>
             <div className="hog-card-top">

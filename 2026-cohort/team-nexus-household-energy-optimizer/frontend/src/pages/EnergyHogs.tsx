@@ -42,6 +42,13 @@ const RESOURCES = [
   },
 ];
 
+function hogsSubtitle(count: number): string {
+  if (count === 1) return "Your biggest monthly draw in your current scenario, with a tailored tip.";
+  if (count === 2) return "Your two biggest monthly draws in your current scenario, with a tailored tip for each.";
+  if (count >= 3) return "Your top 3 biggest monthly draws in your current scenario, with a tailored tip for each.";
+  return "See what's driving your bill the most, with a tailored tip for each appliance.";
+}
+
 export function EnergyHogs() {
   const { hogs, formatCost } = useOutletContext<EnergyContext>();
 
@@ -49,10 +56,7 @@ export function EnergyHogs() {
     <div className="page">
       <div className="page-header">
         <h1>Top energy hogs</h1>
-        <p className="page-subtitle">
-          Your three biggest monthly draws in your current scenario, with a tailored tip for
-          each.
-        </p>
+        <p className="page-subtitle">{hogsSubtitle(hogs.length)}</p>
       </div>
       <TopHogsCard hogs={hogs} formatCost={formatCost} />
 

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Accessibility, Flame, Gauge, Menu, SlidersHorizontal, X } from "lucide-react";
-import { BASELINE_PROFILES } from "../data/appliances";
-import { REGIONS } from "../data/regions";
+import type { BaselineProfile, Region } from "../types";
 import type { ThemePreference } from "../lib/theme";
 import type { TextSizePreference } from "../lib/textSize";
 import { AccessibilityControls } from "./AccessibilityControls";
@@ -16,8 +15,10 @@ const NAV_ITEMS = [
 interface TopBarProps {
   baselineId: string;
   onBaselineChange: (id: string) => void;
+  baselineProfiles: BaselineProfile[];
   regionId: string;
   onRegionChange: (id: string) => void;
+  regions: Region[];
   theme: ThemePreference;
   onThemeChange: (value: ThemePreference) => void;
   textSize: TextSizePreference;
@@ -32,8 +33,10 @@ interface TopBarProps {
 export function TopBar({
   baselineId,
   onBaselineChange,
+  baselineProfiles,
   regionId,
   onRegionChange,
+  regions,
   theme,
   onThemeChange,
   textSize,
@@ -55,7 +58,7 @@ export function TopBar({
       value={baselineId}
       onChange={(event) => onBaselineChange(event.target.value)}
     >
-      {BASELINE_PROFILES.map((profile) => (
+      {baselineProfiles.map((profile) => (
         <option key={profile.id} value={profile.id}>
           {profile.label}
         </option>
@@ -70,7 +73,7 @@ export function TopBar({
       value={regionId}
       onChange={(event) => onRegionChange(event.target.value)}
     >
-      {REGIONS.map((region) => (
+      {regions.map((region) => (
         <option key={region.id} value={region.id}>
           {region.label}
         </option>

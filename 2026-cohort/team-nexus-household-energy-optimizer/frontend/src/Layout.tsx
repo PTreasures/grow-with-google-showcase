@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { APPLIANCES, BASELINE_PROFILES, type Appliance } from "./data/appliances";
-import { REGIONS } from "./data/regions";
+import type { Appliance, BaselineProfile, Region } from "./types";
+import { fetchAppliances, fetchBaselineProfiles, fetchRegions } from "./lib/api";
 import {
   buildBreakdown,
-  buildDefaultHours,
+  buildProfileHours,
   energyScore,
   formatCurrency,
   monthlyCarbonLbs,
@@ -23,19 +23,74 @@ import type { EnergyContext, NewApplianceInput } from "./context";
 
 let customApplianceSeq = 0;
 
+interface EnergyData {
+  catalog: Appliance[];
+  baselineProfiles: BaselineProfile[];
+  regions: Region[];
+}
+
 export function Layout() {
+  const [data, setData] = useState<EnergyData | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([fetchAppliances(), fetchBaselineProfiles(), fetchRegions()])
+      .then(([catalog, baselineProfiles, regions]) => {
+        if (!cancelled) setData({ catalog, baselineProfiles, regions });
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setLoadError(error instanceof Error ? error.message : "Failed to load energy data.");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loadError) {
+    return (
+      <div className="loading-state">
+        <p>Couldn&rsquo;t reach the Tenant Power Tracker backend.</p>
+        <p className="loading-state-detail">{loadError}</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="loading-state">
+        <p>Loading your energy data&hellip;</p>
+      </div>
+    );
+  }
+
+  return (
+    <LayoutReady catalog={data.catalog} baselineProfiles={data.baselineProfiles} regions={data.regions} />
+  );
+}
+
+interface LayoutReadyProps {
+  catalog: Appliance[];
+  baselineProfiles: BaselineProfile[];
+  regions: Region[];
+}
+
+function LayoutReady({ catalog, baselineProfiles, regions }: LayoutReadyProps) {
   const { pathname } = useLocation();
   const [theme, setTheme] = useState<ThemePreference>(() => getStoredTheme());
   const [textSize, setTextSize] = useState<TextSizePreference>(() => getStoredTextSize());
   const [a11yOpen, setA11yOpen] = useState(false);
   const [isReading, setIsReading] = useState(false);
-  const [baselineId, setBaselineId] = useState(
-    BASELINE_PROFILES.find((profile) => profile.id === "1-bed-apartment")?.id ??
-      BASELINE_PROFILES[0].id,
+  const initialBaselineProfile =
+    baselineProfiles.find((profile) => profile.id === "1-bed-apartment") ?? baselineProfiles[0];
+  const [baselineId, setBaselineId] = useState(initialBaselineProfile.id);
+  const [regionId, setRegionId] = useState(regions[0].id);
+  const [appliances, setAppliances] = useState<Appliance[]>(catalog);
+  const [hours, setHours] = useState<HoursByCategory>(() =>
+    buildProfileHours(catalog, initialBaselineProfile),
   );
-  const [regionId, setRegionId] = useState(REGIONS[0].id);
-  const [appliances, setAppliances] = useState<Appliance[]>(APPLIANCES);
-  const [hours, setHours] = useState<HoursByCategory>(() => buildDefaultHours(APPLIANCES));
 
   useEffect(() => {
     applyTheme(theme);
@@ -55,12 +110,12 @@ export function Layout() {
   }, []);
 
   const baselineProfile =
-    BASELINE_PROFILES.find((profile) => profile.id === baselineId) ?? BASELINE_PROFILES[0];
-  const region = REGIONS.find((candidate) => candidate.id === regionId) ?? REGIONS[0];
+    baselineProfiles.find((profile) => profile.id === baselineId) ?? baselineProfiles[0];
+  const region = regions.find((candidate) => candidate.id === regionId) ?? regions[0];
 
   const defaultBreakdown = useMemo(
-    () => buildBreakdown(buildDefaultHours(appliances), appliances, region.ratePerKwh),
-    [appliances, region.ratePerKwh],
+    () => buildBreakdown(buildProfileHours(appliances, baselineProfile), appliances, region.ratePerKwh),
+    [appliances, baselineProfile, region.ratePerKwh],
   );
   const userBreakdown = useMemo(
     () => buildBreakdown(hours, appliances, region.ratePerKwh),
@@ -73,8 +128,10 @@ export function Layout() {
   const userKwh = totalKwh(userBreakdown);
   const defaultCarbonLbs = monthlyCarbonLbs(defaultKwh, region.carbonLbsPerKwh);
   const carbonLbs = monthlyCarbonLbs(userKwh, region.carbonLbsPerKwh);
-  const score = energyScore(userKwh, baselineProfile.monthlyKwh);
+  const score = energyScore(userKwh, defaultKwh);
   const hogs = topEnergyHogs(userBreakdown, 3);
+  const removableIds = new Set(appliances.map((appliance) => appliance.id));
+  const removedBuiltins = catalog.filter((appliance) => !removableIds.has(appliance.id));
 
   function formatCost(value: number): string {
     return formatCurrency(value, region.currency, region.locale);
@@ -82,6 +139,21 @@ export function Layout() {
 
   function handleHoursChange(id: string, value: number) {
     setHours((prev) => ({ ...prev, [id]: value }));
+  }
+
+  /** Switching home size resets the sliders to that profile's typical hours, so the change is actually visible. */
+  function handleBaselineChange(id: string) {
+    setBaselineId(id);
+    const profile = baselineProfiles.find((candidate) => candidate.id === id) ?? baselineProfiles[0];
+    setHours(buildProfileHours(appliances, profile));
+  }
+
+  /** Adds a removed built-in appliance back with its real wattage/tip, no retyping needed. */
+  function handleReAddAppliance(id: string) {
+    const original = catalog.find((appliance) => appliance.id === id);
+    if (!original) return;
+    setAppliances((prev) => [...prev, original]);
+    setHours((prev) => ({ ...prev, [id]: baselineProfile.hoursByAppliance[id] ?? original.defaultHours }));
   }
 
   function handleAddAppliance(input: NewApplianceInput) {
@@ -115,6 +187,18 @@ export function Layout() {
     );
   }
 
+  function handleUpdateQuantity(id: string, quantity: number) {
+    setAppliances((prev) =>
+      prev.map((appliance) => (appliance.id === id ? { ...appliance, quantity } : appliance)),
+    );
+  }
+
+  /** Empties the list entirely. Removed built-ins remain available as one-tap re-add chips. */
+  function handleClearAll() {
+    setAppliances([]);
+    setHours({});
+  }
+
   function handleReadAloud() {
     const text = document.querySelector<HTMLElement>(".page-content")?.innerText ?? "";
     setIsReading(true);
@@ -146,6 +230,10 @@ export function Layout() {
     onAddAppliance: handleAddAppliance,
     onRemoveAppliance: handleRemoveAppliance,
     onUpdateWatts: handleUpdateWatts,
+    onUpdateQuantity: handleUpdateQuantity,
+    onClearAll: handleClearAll,
+    removedBuiltins,
+    onReAddAppliance: handleReAddAppliance,
   };
 
   return (
@@ -153,9 +241,11 @@ export function Layout() {
       <div className="a11y-zoom-scope">
         <TopBar
           baselineId={baselineId}
-          onBaselineChange={setBaselineId}
+          onBaselineChange={handleBaselineChange}
+          baselineProfiles={baselineProfiles}
           regionId={regionId}
           onRegionChange={setRegionId}
+          regions={regions}
           theme={theme}
           onThemeChange={setTheme}
           textSize={textSize}

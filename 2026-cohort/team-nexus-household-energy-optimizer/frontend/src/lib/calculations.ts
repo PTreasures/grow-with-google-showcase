@@ -1,9 +1,4 @@
-import {
-  APPLIANCES,
-  CARBON_LBS_PER_KWH,
-  UTILITY_RATE_PER_KWH,
-  type Appliance,
-} from "../data/appliances";
+import type { Appliance, BaselineProfile } from "../types";
 
 const DAYS_PER_MONTH = 30;
 
@@ -17,25 +12,33 @@ export function monthlyKwh(watts: number, hoursPerDay: number): number {
   return (watts * hoursPerDay * DAYS_PER_MONTH) / 1000;
 }
 
-export function monthlyCost(kwh: number, rate: number = UTILITY_RATE_PER_KWH): number {
+/** Per-unit watts times how many identical units the user has (e.g. 2 TVs). */
+export function effectiveWatts(appliance: Appliance): number {
+  return appliance.watts * (appliance.quantity ?? 1);
+}
+
+export function monthlyCost(kwh: number, rate: number): number {
   return kwh * rate;
 }
 
-export function monthlyCarbonLbs(kwh: number, factor: number = CARBON_LBS_PER_KWH): number {
+export function monthlyCarbonLbs(kwh: number, factor: number): number {
   return kwh * factor;
 }
 
 export type HoursByCategory = Record<string, number>;
 
-/** Maps each appliance's own default-hours, so it stays correct as appliances are added/removed. */
-export function buildDefaultHours(appliances: Appliance[]): HoursByCategory {
+/**
+ * Starting-point hours for a home-size profile: uses the profile's own hours
+ * for appliances it specifies, and falls back to that appliance's own
+ * default for anything the profile doesn't mention (a laptop doesn't stop
+ * existing just because a profile forgot to list it).
+ */
+export function buildProfileHours(appliances: Appliance[], profile: BaselineProfile): HoursByCategory {
   return appliances.reduce((acc, appliance) => {
-    acc[appliance.id] = appliance.defaultHours;
+    acc[appliance.id] = profile.hoursByAppliance[appliance.id] ?? appliance.defaultHours;
     return acc;
   }, {} as HoursByCategory);
 }
-
-export const DEFAULT_HOURS: HoursByCategory = buildDefaultHours(APPLIANCES);
 
 export interface ApplianceBreakdown {
   appliance: Appliance;
@@ -46,12 +49,12 @@ export interface ApplianceBreakdown {
 
 export function buildBreakdown(
   hoursByCategory: HoursByCategory,
-  appliances: Appliance[] = APPLIANCES,
-  rate: number = UTILITY_RATE_PER_KWH,
+  appliances: Appliance[],
+  rate: number,
 ): ApplianceBreakdown[] {
   return appliances.map((appliance) => {
     const hours = clampHours(hoursByCategory[appliance.id], appliance);
-    const kwh = monthlyKwh(appliance.watts, hours);
+    const kwh = monthlyKwh(effectiveWatts(appliance), hours);
     return {
       appliance,
       hours,
@@ -75,7 +78,7 @@ export function topEnergyHogs(breakdown: ApplianceBreakdown[], count = 3): Appli
  * so it never crashes into zero or negative territory.
  */
 export function energyScore(userKwh: number, baselineKwh: number): number {
-  if (baselineKwh <= 0) return 1;
+  if (baselineKwh <= 0) return userKwh <= 0 ? 100 : 1;
   const ratio = userKwh / baselineKwh;
   const raw = 100 - (ratio - 1) * 100;
   return Math.min(100, Math.max(1, Math.round(raw)));

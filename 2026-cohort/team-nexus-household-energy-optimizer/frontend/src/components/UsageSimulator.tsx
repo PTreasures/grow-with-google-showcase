@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import type { Appliance } from "../data/appliances";
+import { Eraser, Plus, Trash2 } from "lucide-react";
+import type { Appliance } from "../types";
 import type { HoursByCategory } from "../lib/calculations";
 import type { NewApplianceInput } from "../context";
 import { getApplianceIcon } from "./applianceIcons";
+
+/** Appliances whose real-world usage is naturally weekly (loads/sessions), not a daily habit. */
+const WEEKLY_DEFAULT_IDS = new Set(["washing-machine", "clothes-dryer", "dishwasher", "gaming-console"]);
 
 interface UsageSimulatorProps {
   hours: HoursByCategory;
@@ -12,6 +15,10 @@ interface UsageSimulatorProps {
   onAddAppliance: (input: NewApplianceInput) => void;
   onRemoveAppliance: (id: string) => void;
   onUpdateWatts: (id: string, watts: number) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
+  onClearAll: () => void;
+  removedBuiltins: Appliance[];
+  onReAddAppliance: (id: string) => void;
 }
 
 interface ApplianceRowProps {
@@ -20,11 +27,14 @@ interface ApplianceRowProps {
   onChange: (id: string, hours: number) => void;
   onRemove: (id: string) => void;
   onUpdateWatts: (id: string, watts: number) => void;
+  onUpdateQuantity: (id: string, quantity: number) => void;
 }
 
-function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: ApplianceRowProps) {
-  const Icon = getApplianceIcon(appliance.id);
+function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts, onUpdateQuantity }: ApplianceRowProps) {
+  const Icon = getApplianceIcon(appliance.id, appliance.category);
   const [wattsInput, setWattsInput] = useState(String(appliance.watts));
+  const [qtyInput, setQtyInput] = useState(String(appliance.quantity ?? 1));
+  const [unit, setUnit] = useState<"day" | "week">(() => (WEEKLY_DEFAULT_IDS.has(appliance.id) ? "week" : "day"));
 
   function commitWatts() {
     const parsed = Number(wattsInput);
@@ -37,11 +47,51 @@ function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: A
     }
   }
 
+  function commitQuantity() {
+    const parsed = Number(qtyInput);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      const clamped = Math.min(20, Math.max(1, Math.round(parsed)));
+      onUpdateQuantity(appliance.id, clamped);
+      setQtyInput(String(clamped));
+    } else {
+      setQtyInput(String(appliance.quantity ?? 1));
+    }
+  }
+
+  /** In week mode the slider operates in whole hours/week, so onChange still hands the shared hours/day math its usual value. */
+  const isWeek = unit === "week";
+  const sliderMax = isWeek ? appliance.maxHours * 7 : appliance.maxHours;
+  const sliderValue = isWeek ? Math.round(hours * 7) : hours;
+
+  function handleSliderChange(value: number) {
+    onChange(appliance.id, isWeek ? value / 7 : value);
+  }
+
+  function toggleUnit() {
+    setUnit((prev) => (prev === "day" ? "week" : "day"));
+  }
+
   return (
     <div className="slider-row">
       <div className="slider-row-head">
         <Icon className="slider-row-icon" size={18} strokeWidth={1.75} />
         <span className="slider-row-label">{appliance.label}</span>
+        <span className="qty-field">
+          <span className="qty-unit">&times;</span>
+          <input
+            type="number"
+            className="qty-input"
+            min={1}
+            max={20}
+            value={qtyInput}
+            onChange={(event) => setQtyInput(event.target.value)}
+            onBlur={commitQuantity}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
+            aria-label={`${appliance.label} quantity`}
+          />
+        </span>
         <span className="watts-field">
           <input
             type="number"
@@ -58,7 +108,16 @@ function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: A
           />
           <span className="watts-unit">W</span>
         </span>
-        <span className="slider-row-value">{hours.toFixed(0)} hrs/day</span>
+        <button
+          type="button"
+          className="slider-row-value slider-row-value-toggle"
+          onClick={toggleUnit}
+          title={isWeek ? `≈ ${hours.toFixed(2)} hrs/day, click to switch to /day` : "Click to switch to /week"}
+        >
+          <span className="slider-row-value-text">
+            {isWeek ? `${sliderValue} hrs/wk` : `${hours > 0 && hours < 1 ? hours.toFixed(2) : hours.toFixed(0)} hrs/day`}
+          </span>
+        </button>
         <button
           type="button"
           className="slider-row-remove"
@@ -70,12 +129,12 @@ function ApplianceRow({ appliance, hours, onChange, onRemove, onUpdateWatts }: A
       </div>
       <input
         type="range"
-        min={appliance.minHours}
-        max={appliance.maxHours}
+        min={0}
+        max={sliderMax}
         step={1}
-        value={hours}
-        aria-label={`${appliance.label} hours per day`}
-        onChange={(event) => onChange(appliance.id, Number(event.target.value))}
+        value={sliderValue}
+        aria-label={`${appliance.label} hours per ${unit}`}
+        onChange={(event) => handleSliderChange(Number(event.target.value))}
       />
     </div>
   );
@@ -88,6 +147,10 @@ export function UsageSimulator({
   onAddAppliance,
   onRemoveAppliance,
   onUpdateWatts,
+  onUpdateQuantity,
+  onClearAll,
+  removedBuiltins,
+  onReAddAppliance,
 }: UsageSimulatorProps) {
   const [newLabel, setNewLabel] = useState("");
   const [newWatts, setNewWatts] = useState("");
@@ -103,12 +166,27 @@ export function UsageSimulator({
     setNewWatts("");
   }
 
+  function handleClearAll() {
+    if (window.confirm("Remove every appliance? You can add them back individually anytime.")) {
+      onClearAll();
+    }
+  }
+
   return (
     <div className="card">
-      <div className="card-title">Usage simulator</div>
+      <div className="card-title-row">
+        <div className="card-title">Usage simulator</div>
+        {appliances.length > 0 && (
+          <button type="button" className="btn btn-secondary btn-small" onClick={handleClearAll}>
+            <Eraser size={13} strokeWidth={2} />
+            Clear all
+          </button>
+        )}
+      </div>
       <p className="card-subtitle">
-        Drag each slider to match how many hours a day you actually run it, and correct the
-        wattage if your appliance draws differently. Remove anything you don't have.
+        Drag each slider to match how much you actually run it, click the hours value to switch
+        between per day and per week, and correct the wattage or quantity if yours differ. Remove
+        anything you don't have.
       </p>
       {appliances.length === 0 && (
         <p className="muted-note">Nothing here yet, add an appliance below to get started.</p>
@@ -121,8 +199,26 @@ export function UsageSimulator({
           onChange={onChange}
           onRemove={onRemoveAppliance}
           onUpdateWatts={onUpdateWatts}
+          onUpdateQuantity={onUpdateQuantity}
         />
       ))}
+
+      {removedBuiltins.length > 0 && (
+        <div className="appliance-suggestions">
+          <span className="appliance-suggestions-label">Add back:</span>
+          {removedBuiltins.map((appliance) => (
+            <button
+              key={appliance.id}
+              type="button"
+              className="suggestion-chip"
+              onClick={() => onReAddAppliance(appliance.id)}
+            >
+              <Plus size={13} strokeWidth={2} />
+              {appliance.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <form className="add-appliance-form" onSubmit={handleAdd}>
         <div className="add-appliance-fields">
