@@ -4,6 +4,8 @@
 ***UN SDG 7**: [Affordable and Clean Energy](https://www.un.org/sustainabledevelopment/energy/)*  
 ***Project Topic**: Household Energy Efficiency Optimizer*
 
+**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/) — hosted on Render's free tier, so it spins down when idle. If the page looks stuck loading, give it about a minute to spin back up.
+
 ---
 
 ## 1. Problem Statement
@@ -40,7 +42,7 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 - [ ] Security Considerations section
 
 **Phase 4: Deployment**
-- [ ] Live public URL
+- [x] Live public URL - deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [ ] Demo narrative
 
 ---
@@ -173,7 +175,11 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 11. Demo
 
-> *Coming soon.*
+Live app: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+
+> Hosted on Render's free tier, which spins down after inactivity, the first load after a period of idle time can take up to a minute while the server wakes back up. Subsequent loads are fast.
+
+Demo narrative: *Coming soon.*
 
 ---
 
