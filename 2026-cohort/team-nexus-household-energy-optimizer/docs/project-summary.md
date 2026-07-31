@@ -3,7 +3,7 @@
 **Team Nexus Collaborative**
 UN SDG 7: [Affordable and Clean Energy](https://www.un.org/sustainabledevelopment/energy/)
 
-**Live site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/) — hosted on Render's free tier, so it spins down when idle. Give the first load about a minute to wake the server back up.
+**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/): Hosted on Render's free tier, so it spins down when idle. Give the first load about a minute to wake the server back up.
 
 ---
 

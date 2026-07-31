@@ -4,7 +4,7 @@
 ***UN SDG 7**: [Affordable and Clean Energy](https://www.un.org/sustainabledevelopment/energy/)*  
 ***Project Topic**: Household Energy Efficiency Optimizer*
 
-**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/) — hosted on Render's free tier, so it spins down when idle. If the page looks stuck loading, give it about a minute to spin back up.
+**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/): Hosted on Render's free tier, so it spins down when idle. If the page looks stuck loading, give it about a minute to spin back up.
 
 ---
 
@@ -42,7 +42,7 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 - [ ] Security Considerations section
 
 **Phase 4: Deployment**
-- [x] Live public URL - deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+- [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [ ] Demo narrative
 
 ---
@@ -158,7 +158,11 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 9. Future Ideas
 
-> *Coming soon.*
+- **Progress Tracking Over Time:** Save a user's score and scenarios across sessions and chart them on a trend line, not just a single snapshot. Eco-conscious and family personas specifically asked to see whether their habits are "working" over time, not just a one-off score.
+- **Utility Bill Upload/OCR Parsing:** Let tenants upload a photo or PDF of an actual bill to auto-extract usage instead of relying only on sliders, closing the gap between the "sample bill data" idea in the problem statement and what's implemented today.
+- **Multi-User/Household Accounts:** Research surfaced that students and families rarely control 100% of a household's usage. A shared household mode (e.g., splitting a score or bill across roommates) would address that attribution problem more directly than personal-habit framing alone.
+- **Utility/Rebate Integration:** Surface region-specific utility rebate programs, time-of-use pricing, or renewable-energy plan options alongside the tips, so recommendations tie into real savings opportunities and not just generic advice.
+- **Lightweight Gamification:** Badges or streaks for sustained improvement, plus an opt-in anonymous comparison against similar households in the same region, to reinforce the "trust the score" motivation without requiring account-heavy infrastructure.
 
 ---
 
@@ -175,7 +179,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 11. Demo
 
-Live app: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+Live App: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 
 > Hosted on Render's free tier, which spins down after inactivity, the first load after a period of idle time can take up to a minute while the server wakes back up. Subsequent loads are fast.
 
