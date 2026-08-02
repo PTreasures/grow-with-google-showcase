@@ -8,15 +8,16 @@
 
 ---
 
+## Table of Contents
 | | |
 |---|---|
 | [1. Problem Statement](#1-problem-statement) | [2. Proposed Solution](#2-proposed-solution) |
 | [3. MVP Feature Checklist](#3-mvp-feature-checklist) | [4. Grow with Google Resources Used](#4-grow-with-google-resources-used) |
 | [5. Tech Stack](#5-tech-stack) | [6. Project Structure](#6-project-structure) |
 | [7. Setup / Run Instructions](#7-setup--run-instructions) | [8. Project Timeline](#8-project-timeline) |
-| [9. Risks & Mitigations](#9-risks--mitigations) | [10. Future Ideas](#10-future-ideas) |
-| [11. Team Members](#11-team-members) | [12. Demo](#12-demo) |
-| [13. License](#13-license) | |
+| [9. Risks & Mitigations](#9-risks--mitigations) | [10. Security Considerations](#10-security-considerations) |
+| [11. Future Ideas](#11-future-ideas) | [12. Team Members](#12-team-members) |
+| [13. Demo](#13-demo) | [14. License](#14-license) |
 
 ---
 
@@ -53,6 +54,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 **Phase 4: Deployment**
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+- [x] Risks & mitigations
 - [ ] Digital marketing campaign strategy
 - [ ] Demo narrative
 
@@ -82,40 +84,13 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ```bash
 team-nexus-household-energy-optimizer/
-├── backend/                        # Flask API
-│   ├── app.py                       # Routes: appliances, tenant profiles, regions, /api/simulate
-│   ├── data.py                      # Loads/reshapes the datasets in data/ for the API and simulator
-│   ├── calculations.py              # kWh / cost / carbon / score math (Python port of the frontend engine)
-│   ├── requirements.txt             # Python dependencies
-│   └── .env.example                 # Environment variable template
-├── data/                           # Peace's cleaned datasets, consumed by backend/data.py
-│   ├── eia_appliances.csv           # 11 appliances: watts, default hours/day, category
-│   ├── tenant_profiles.json         # 3 baseline profiles (1-Bed / 2-Bed / 3-Bed)
-│   └── regions.json                 # Rate/carbon table across 15 regions
-├── docs/                           # Project documentation and reports
-│   ├── user-research.md             # Interview methodology, key findings, personas
-│   ├── data-sources.md              # Data methodology: Peace's original drafts + what changed
-│   ├── security-audit-2026-08.md    # pip-audit dependency scan, findings, and fixes applied
-│   └── project-summary.md           # 3-page written summary: research, solution, implementation plan
-├── frontend/                       # React + TypeScript app (Vite)
-│   ├── .env.example                 # VITE_API_URL template
-│   ├── package.json, tsconfig*.json # Dependencies + TypeScript config (standard Vite scaffolding)
-│   └── src/
-│       ├── main.tsx, App.tsx         # App entry point and route definitions
-│       ├── Layout.tsx                # Shared shell + all simulator/session state
-│       ├── context.ts                # Shape of the state Layout hands down to pages
-│       ├── types.ts                  # Appliance / BaselineProfile / Region shapes
-│       ├── App.css, index.css        # Global styles, color/typography system
-│       ├── pages/                    # Home.tsx, Simulator.tsx, ScoreBreakdown.tsx, EnergyHogs.tsx
-│       ├── components/               # UsageSimulator, SavingsChart, EnergyScoreCard, MiniScoreCard,
-│       │                             #   ScoreSummaryBar, TopHogsCard, StatTile, UsageBreakdownBar,
-│       │                             #   PrintableReport, StickyColumn, TopBar, Footer, ThemeToggle,
-│       │                             #   AccessibilityControls/Panel, applianceIcons
-│       └── lib/                      # calculations.ts, api.ts, theme.ts, textSize.ts, readAloud.ts,
-│                                     #   applianceColors.ts, scoreStatus.ts
-├── .gitignore                      # Ignored files (env, deps, build output, etc.)
-├── LICENSE                         # MIT License
-└── README.md                       # Project overview and documentation
+├── backend/          # Flask API — app.py, data.py, calculations.py, requirements.txt
+├── data/             # Appliance, tenant-profile, and region datasets (CSV/JSON)
+├── docs/             # user-research.md, data-sources.md, security-audit-2026-08.md, project-summary.md
+├── frontend/         # React + TypeScript app (Vite) — src/pages, src/components, src/lib
+├── .gitignore        # Ignored files (env, deps, build output, etc.)
+├── LICENSE           # MIT License
+└── README.md         # Project overview and documentation
 ```
 
 ---
@@ -189,11 +164,21 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Synthetic, hand-modeled tenant baseline profiles (not a large real-world usage dataset) | Baseline comparisons may not generalize to every household | Grounded the underlying appliance data in EIA.gov figures (methodology in [data-sources.md](docs/data-sources.md)); validated framing (sliders over manual entry, dual cost/impact messaging) against real renter interviews, see [user-research.md](docs/user-research.md) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages | Audited with `pip-audit` and patched (Flask, flask-cors, python-dotenv bumped); added a CI security-check workflow to catch regressions |
 | No account system or persistent storage | Can't support cross-session features like progress tracking (see Future Ideas) | Intentionally out of MVP scope; flagged as a documented future idea rather than a silent gap |
-| Submission logistics: PR must land on the actual MMC org repo (`upstream`), not just the team's fork | A PR opened only within the fork wouldn't be visible to the review agent | Confirmed the correct remote/target before the deadline; plan to open the `upstream/main` PR with buffer before Aug 14, 11:59 PM EST |
 
 ---
 
-## 10. Future Ideas
+## 10. Security Considerations
+
+- **No accounts, no persistent storage.** There's no login and nothing about a tenant's usage is stored server-side or in a database — the app is entirely session-based on the client.
+- **Input validation, client and server side.** Hours-per-day values are clamped against min/max/NaN/negative input in both the frontend (`UsageSimulator.tsx`) and the backend (`clamp_hours` in `backend/calculations.py`), so malformed input can't crash the API or produce negative energy/cost figures. Wattage (1–10,000W) and quantity (1–20) are similarly clamped in the UI.
+- **Unknown region/baseline IDs are rejected, not silently ignored.** `/api/simulate` returns a 400 for an unrecognized `region_id` or `baseline_id` instead of falling back quietly, so bad input surfaces as an error rather than a wrong answer.
+- **CORS is intentionally open.** `CORS(app)` allows all origins, since this is a public, read-mostly API with no authenticated or user-specific data behind it — there's nothing sensitive a stricter policy would be protecting.
+- **Dependency vulnerabilities audited and patched.** Scanned with `pip-audit`, 7 known CVEs found and fixed across Flask, flask-cors, and python-dotenv — full findings in [security-audit-2026-08.md](docs/security-audit-2026-08.md).
+- **No secrets committed.** Real `.env` files are excluded via `.gitignore`; only `.env.example` placeholders are checked in. A `gitleaks` secret scan and `pip-audit` dependency check both run automatically in CI (`.github/workflows/security-check.yml`) on pushes and pull requests.
+
+---
+
+## 11. Future Ideas
 
 - **Progress Tracking Over Time:** Save a user's score and scenarios across sessions and chart them on a trend line, not just a single snapshot. Eco-conscious and family personas specifically asked to see whether their habits are "working" over time, not just a one-off score.
 - **Utility Bill Upload/OCR Parsing:** Let tenants upload a photo or PDF of an actual bill to auto-extract usage instead of relying only on sliders, closing the gap between the "sample bill data" idea in the problem statement and what's implemented today.
@@ -203,7 +188,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 11. Team Members
+## 12. Team Members
 
 | Name | Role | Contact | MVP Responsibility |
 |------|------|---------|---------------------|
@@ -214,7 +199,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 12. Demo
+## 13. Demo
 
 Live App: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 
@@ -224,6 +209,6 @@ Demo narrative: *Coming soon.*
 
 ---
 
-## 13. License
+## 14. License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.

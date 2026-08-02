@@ -79,7 +79,7 @@ Research directly shaped the design:
 
 | Name | Role | MVP Responsibility |
 |---|---|---|
-| Ashenafi Demssie | Cybersecurity Lead | Security considerations doc, input validation review, dependency audit |
+| Ashenafi Mekonnen Demssie | Cybersecurity Lead | Security considerations doc, input validation review, dependency audit |
 | Peace Kahunde | Data Lead | Dataset cleaning, baseline profiles, calculation functions |
 | Priscilla Gyepi-Garbrah | Digital Marketing Lead | Launch messaging, demo narrative, social/email ad (stretch) |
 | Sehr Abrar | UX/UI Lead & Full-Stack/Integration | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
