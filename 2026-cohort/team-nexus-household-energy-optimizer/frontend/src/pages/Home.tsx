@@ -20,7 +20,7 @@ const STEPS = [
     num: "01",
     icon: SlidersHorizontal,
     title: "Simulate your usage",
-    body: "Drag sliders for HVAC, fridge, laundry, and entertainment to match your real routine.",
+    body: "Drag sliders for 11 built-in appliances, fridge, AC, washer, TV, and more, or add your own to match your real routine.",
   },
   {
     to: "/score",
