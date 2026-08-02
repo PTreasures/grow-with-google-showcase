@@ -86,7 +86,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 team-nexus-household-energy-optimizer/
 ├── backend/          # Flask API — app.py, data.py, calculations.py, requirements.txt
 ├── data/             # Appliance, tenant-profile, and region datasets (CSV/JSON)
-├── docs/             # user-research.md, data-sources.md, security-audit-2026-08.md, project-summary.md
+├── docs/             # user-research.md, data-sources.md, architecture.md, security-audit-2026-08.md, project-summary.md
 ├── frontend/         # React + TypeScript app (Vite) — src/pages, src/components, src/lib
 ├── .gitignore        # Ignored files (env, deps, build output, etc.)
 ├── LICENSE           # MIT License

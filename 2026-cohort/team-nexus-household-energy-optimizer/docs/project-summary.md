@@ -74,6 +74,7 @@ Research directly shaped the design:
 - `data/regions.json` — rate and carbon-intensity table across 15 regions
 - Core kWh / cost / carbon math is implemented once in TypeScript (`frontend/src/lib/calculations.ts`, driving the live simulator) and mirrored in Python (`backend/calculations.py`) so the API stays in sync with what the UI computes
 - Full data methodology, including Peace's original draft figures and what changed en route to the shipped schema, is in [data-sources.md](./data-sources.md)
+- Full system diagram and data flow (what's computed client-side vs. server-side, and why) is in [architecture.md](./architecture.md)
 
 ### Team & Ownership
 
