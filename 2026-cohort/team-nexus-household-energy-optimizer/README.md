@@ -37,7 +37,7 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 - [x] Basic cohesive UI (color palette, typography, metric cards)
 - [x] Edge-case handling: 0 hrs / 24 hrs input doesn't crash or return negative numbers
 - [x] README.md with install steps + requirements.txt
-- [ ] Security Considerations section
+- [x] Security Considerations section
 
 **Phase 4: Deployment**
 - [ ] Live public URL
@@ -164,7 +164,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 | Name | Role | Contact | MVP Responsibility |
 |------|------|---------|---------------------|
-| Ashenafi Demssie | Cybersecurity Lead | | Security considerations doc, input validation review, dependency audit |
+| [Ashenafi Mekonnen Demssie](https://www.linkedin.com/in/ashenafi-mekonnen-demssie/)| Cybersecurity Lead | ashenafimekonnen600@gmail.com | Dependency vulnerability audit (pip-audit), secret-scan review, automated security CI via GitHub Actions, security audit documentation |
 | [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Lead | peacek301@gmail.com | Dataset cleaning, baseline profiles, calculation functions |
 | [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging, demo narrative, social/email ad (stretch) |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX/UI Lead & Full-Stack/Integration | sehr.abrar1@gmail.com | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
