@@ -8,6 +8,18 @@
 
 ---
 
+| | |
+|---|---|
+| [1. Problem Statement](#1-problem-statement) | [2. Proposed Solution](#2-proposed-solution) |
+| [3. MVP Feature Checklist](#3-mvp-feature-checklist) | [4. Grow with Google Resources Used](#4-grow-with-google-resources-used) |
+| [5. Tech Stack](#5-tech-stack) | [6. Project Structure](#6-project-structure) |
+| [7. Setup / Run Instructions](#7-setup--run-instructions) | [8. Project Timeline](#8-project-timeline) |
+| [9. Risks & Mitigations](#9-risks--mitigations) | [10. Future Ideas](#10-future-ideas) |
+| [11. Team Members](#11-team-members) | [12. Demo](#12-demo) |
+| [13. License](#13-license) | |
+
+---
+
 ## 1. Problem Statement
 
 Apartment tenants lack clear, actionable metrics to calculate and reduce their personal energy footprints without expensive hardware.
@@ -16,7 +28,7 @@ Apartment tenants lack clear, actionable metrics to calculate and reduce their p
 
 ## 2. Proposed Solution
 
-A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips, all benchmarked against real-world datasets (EIA.gov, Kaggle) instead of live hardware readings.
+A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips, all benchmarked against real-world EIA.gov data instead of live hardware readings.
 
 ---
 
@@ -24,7 +36,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 **Phase 1: Data & Baseline Logic**
 - [x] Cleaned EIA.gov appliance dataset (CSV/JSON) - `data/eia_appliances.csv`, served via `/api/appliances` and `/api/simulator/appliances`
-- [x] 3–5 synthetic tenant baseline profiles from Kaggle benchmarks - `data/tenant_profiles.json` (1-Bed / 2-Bed / 3-Bed), served via `/api/simulator/baseline-profiles`
+- [x] 3–5 synthetic tenant baseline profiles modeled on typical usage by home size - `data/tenant_profiles.json` (1-Bed / 2-Bed / 3-Bed), served via `/api/simulator/baseline-profiles`
 - [x] Core calculation functions: kWh, cost, carbon footprint - implemented in `frontend/src/lib/calculations.ts` (drives the live simulator) with a matching Python port in `backend/calculations.py` (served via `/api/simulate` for parity)
 
 **Phase 2: Core App Features**
@@ -60,7 +72,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 - **Frontend**: React + TypeScript (Vite), plain CSS with a shared color/typography system, [lucide-react](https://lucide.dev/) for icons
 - **Backend**: Python + Flask
-- **Data Sources**: [EIA.gov](https://www.eia.gov/) (appliance benchmarks), [Kaggle](https://www.kaggle.com/) (tenant baseline profiles)
+- **Data Sources**: [EIA.gov](https://www.eia.gov/) (appliance benchmarks); tenant baseline profiles are synthetic, modeled on typical usage by home size
 - **Deployment**: Render (backend web service + frontend static site)
 - **Tooling**: Git + GitHub for version control
 
@@ -80,17 +92,27 @@ team-nexus-household-energy-optimizer/
 │   ├── eia_appliances.csv           # 11 appliances: watts, default hours/day, category
 │   ├── tenant_profiles.json         # 3 baseline profiles (1-Bed / 2-Bed / 3-Bed)
 │   └── regions.json                 # Rate/carbon table across 15 regions
-├── docs/                           # Project documentation and reports (e.g. user-research.md)
+├── docs/                           # Project documentation and reports
+│   ├── user-research.md             # Interview methodology, key findings, personas
+│   ├── data-sources.md              # Data methodology: Peace's original drafts + what changed
+│   ├── security-audit-2026-08.md    # pip-audit dependency scan, findings, and fixes applied
+│   └── project-summary.md           # 3-page written summary: research, solution, implementation plan
 ├── frontend/                       # React + TypeScript app (Vite)
 │   ├── .env.example                 # VITE_API_URL template
+│   ├── package.json, tsconfig*.json # Dependencies + TypeScript config (standard Vite scaffolding)
 │   └── src/
 │       ├── main.tsx, App.tsx         # App entry point and route definitions
 │       ├── Layout.tsx                # Shared shell + all simulator/session state
 │       ├── context.ts                # Shape of the state Layout hands down to pages
 │       ├── types.ts                  # Appliance / BaselineProfile / Region shapes
-│       ├── pages/                    # Home, Simulator, ScoreBreakdown, EnergyHogs
-│       ├── components/               # UsageSimulator, SavingsChart, EnergyScoreCard, TopHogsCard, StatTile, accessibility panel, etc.
-│       └── lib/                      # calculations.ts, api.ts, theme/textSize/readAloud, applianceColors, scoreStatus
+│       ├── App.css, index.css        # Global styles, color/typography system
+│       ├── pages/                    # Home.tsx, Simulator.tsx, ScoreBreakdown.tsx, EnergyHogs.tsx
+│       ├── components/               # UsageSimulator, SavingsChart, EnergyScoreCard, MiniScoreCard,
+│       │                             #   ScoreSummaryBar, TopHogsCard, StatTile, UsageBreakdownBar,
+│       │                             #   PrintableReport, StickyColumn, TopBar, Footer, ThemeToggle,
+│       │                             #   AccessibilityControls/Panel, applianceIcons
+│       └── lib/                      # calculations.ts, api.ts, theme.ts, textSize.ts, readAloud.ts,
+│                                     #   applianceColors.ts, scoreStatus.ts
 ├── .gitignore                      # Ignored files (env, deps, build output, etc.)
 ├── LICENSE                         # MIT License
 └── README.md                       # Project overview and documentation
@@ -158,7 +180,20 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 9. Future Ideas
+## 9. Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (marketing campaign execution, demo narrative) explicitly deprioritized behind core functionality |
+| Render free-tier cold starts | The live site can take up to a minute to respond after idling, which could read as broken during a live demo or grading pass | Documented clearly in the README and Demo section; recorded walkthrough video avoids relying on a cold live load |
+| Synthetic, hand-modeled tenant baseline profiles (not a large real-world usage dataset) | Baseline comparisons may not generalize to every household | Grounded the underlying appliance data in EIA.gov figures (methodology in [data-sources.md](docs/data-sources.md)); validated framing (sliders over manual entry, dual cost/impact messaging) against real renter interviews, see [user-research.md](docs/user-research.md) |
+| Vulnerable backend dependencies | Known CVEs in outdated packages | Audited with `pip-audit` and patched (Flask, flask-cors, python-dotenv bumped); added a CI security-check workflow to catch regressions |
+| No account system or persistent storage | Can't support cross-session features like progress tracking (see Future Ideas) | Intentionally out of MVP scope; flagged as a documented future idea rather than a silent gap |
+| Submission logistics: PR must land on the actual MMC org repo (`upstream`), not just the team's fork | A PR opened only within the fork wouldn't be visible to the review agent | Confirmed the correct remote/target before the deadline; plan to open the `upstream/main` PR with buffer before Aug 14, 11:59 PM EST |
+
+---
+
+## 10. Future Ideas
 
 - **Progress Tracking Over Time:** Save a user's score and scenarios across sessions and chart them on a trend line, not just a single snapshot. Eco-conscious and family personas specifically asked to see whether their habits are "working" over time, not just a one-off score.
 - **Utility Bill Upload/OCR Parsing:** Let tenants upload a photo or PDF of an actual bill to auto-extract usage instead of relying only on sliders, closing the gap between the "sample bill data" idea in the problem statement and what's implemented today.
@@ -168,7 +203,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 10. Team Members
+## 11. Team Members
 
 | Name | Role | Contact | MVP Responsibility |
 |------|------|---------|---------------------|
@@ -179,7 +214,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ---
 
-## 11. Demo
+## 12. Demo
 
 Live App: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 
@@ -189,6 +224,6 @@ Demo narrative: *Coming soon.*
 
 ---
 
-## 12. License
+## 13. License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.

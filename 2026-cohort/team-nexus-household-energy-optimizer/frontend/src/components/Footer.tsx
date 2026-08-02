@@ -20,7 +20,7 @@ export function Footer() {
         </a>
       </div>
       <p className="footer-disclaimer">
-        Figures are estimates benchmarked against sample EIA.gov and Kaggle usage data, not a
+        Figures are estimates benchmarked against sample EIA.gov usage data, not a
         live utility feed. No account, personal, or bill data is stored, everything here runs
         in this browser session only.
       </p>

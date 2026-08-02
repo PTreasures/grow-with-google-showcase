@@ -38,7 +38,7 @@ We synthesized these findings into five personas — Budget-Conscious Renter, Ec
 
 ## 2. Proposed Solution
 
-A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips — all benchmarked against real-world datasets (EIA.gov, Kaggle) instead of live hardware readings.
+A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips — all benchmarked against real-world EIA.gov data instead of live hardware readings.
 
 Research directly shaped the design:
 
@@ -70,9 +70,10 @@ Research directly shaped the design:
 ### Data & Calculations
 
 - `data/eia_appliances.csv` — 11 appliances with wattage, default hours/day, and category, cleaned from EIA.gov
-- `data/tenant_profiles.json` — 3 synthetic baseline profiles (1-Bed / 2-Bed / 3-Bed) derived from Kaggle benchmarks
+- `data/tenant_profiles.json` — 3 synthetic baseline profiles (1-Bed / 2-Bed / 3-Bed), modeled on typical usage by home size
 - `data/regions.json` — rate and carbon-intensity table across 15 regions
 - Core kWh / cost / carbon math is implemented once in TypeScript (`frontend/src/lib/calculations.ts`, driving the live simulator) and mirrored in Python (`backend/calculations.py`) so the API stays in sync with what the UI computes
+- Full data methodology, including Peace's original draft figures and what changed en route to the shipped schema, is in [data-sources.md](./data-sources.md)
 
 ### Team & Ownership
 
@@ -97,7 +98,18 @@ Research directly shaped the design:
 
 ### Status
 
-As of July 31, 2026: Phases 1, 2, and deployment are complete: the frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). Remaining work is the Security Considerations section and the demo narrative.
+As of August 2, 2026: Phases 1, 2, deployment, and the security review are complete — the frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, dependencies have been audited and patched, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). Remaining work is the recorded demo walkthrough and the marketing campaign execution.
+
+### Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the deadline | Scoped hard to an MVP checklist; stretch goals (marketing campaign execution, demo narrative) explicitly deprioritized behind core functionality |
+| Render free-tier cold starts | The live site can take up to a minute to respond after idling, risking a bad first impression during grading | Documented clearly in the README/Demo section; the recorded walkthrough doesn't depend on a cold live load |
+| Synthetic, hand-modeled tenant baseline profiles rather than a large real-world usage dataset | Baseline comparisons may not generalize to every household | Grounded the underlying appliance wattage/hours data in EIA.gov figures; validated the input-flow and messaging design against real renter interviews (see [user-research.md](./user-research.md)) |
+| Vulnerable backend dependencies | Known CVEs in outdated packages (Flask, flask-cors, python-dotenv) | Audited with `pip-audit`, patched, and added a CI security-check workflow to catch regressions going forward |
+| No account system or persistent storage | Can't support cross-session features like progress tracking | Intentionally out of MVP scope; documented as a future idea rather than a silent gap |
+| Submission must land on the actual MMC org repo, not just the team's fork | A PR opened only within the fork wouldn't be visible to the automated review agent | Confirmed the correct remote/target ahead of the deadline; opening the PR to the upstream repo with buffer before August 14, 11:59 PM EST |
 
 ### Grow with Google Resources Used
 
