@@ -44,7 +44,7 @@ Research directly shaped the design:
 
 | Finding | Design Decision |
 |---|---|
-| Nobody tracks appliance hours; lifestyle questions are answerable | Usage Simulator uses sliders (HVAC, fridge, laundry, entertainment) instead of manual kWh/hour entry |
+| Nobody tracks appliance hours; lifestyle questions are answerable | Usage Simulator uses per-appliance sliders (11 built-in appliances, e.g. fridge, AC, washer/dryer) instead of manual kWh/hour entry |
 | Score trust depends on explanation | Score breakdown shown alongside the Personalized Energy Score, not just the number alone |
 | Motivation splits between cost-savers and impact-driven users | Tips reference both cost and environmental framing rather than picking one |
 | Effort tolerance is low | Top 3 "energy hog" detection surfaces the highest-impact fixes instead of requiring review of every category |
@@ -52,7 +52,7 @@ Research directly shaped the design:
 
 ### Core Features
 
-- **Usage Simulator** — sliders for HVAC, fridge, laundry, and entertainment usage
+- **Usage Simulator** — individual sliders for 11 built-in appliances (fridge, AC, washer/dryer, TV, and more), plus the ability to add custom appliances
 - **Savings Visualizer** — bar chart comparing default usage vs. the user's scenario
 - **Personalized Energy Score (1–100)** — benchmarked against a regional baseline
 - **Top 3 "Energy Hog" Detection** — tailored, actionable tips targeting the highest-impact categories

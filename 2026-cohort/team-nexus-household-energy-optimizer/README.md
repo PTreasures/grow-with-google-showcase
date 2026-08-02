@@ -4,7 +4,7 @@
 ***UN SDG 7**: [Affordable and Clean Energy](https://www.un.org/sustainabledevelopment/energy/)*  
 ***Project Topic**: Household Energy Efficiency Optimizer*
 
-**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/): Hosted on Render's free tier, so it spins down when idle. If the page looks stuck loading, give it about a minute to spin back up.
+**Live Site**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/) (if the page looks stuck loading, give it about a minute to spin back up)
 
 ---
 
@@ -22,15 +22,13 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ## 3. MVP Feature Checklist
 
-Tracking against the team's MVP scope doc. The frontend now runs on real data served by the backend, not mock/placeholder data.
-
 **Phase 1: Data & Baseline Logic**
 - [x] Cleaned EIA.gov appliance dataset (CSV/JSON) - `data/eia_appliances.csv`, served via `/api/appliances` and `/api/simulator/appliances`
 - [x] 3–5 synthetic tenant baseline profiles from Kaggle benchmarks - `data/tenant_profiles.json` (1-Bed / 2-Bed / 3-Bed), served via `/api/simulator/baseline-profiles`
 - [x] Core calculation functions: kWh, cost, carbon footprint - implemented in `frontend/src/lib/calculations.ts` (drives the live simulator) with a matching Python port in `backend/calculations.py` (served via `/api/simulate` for parity)
 
 **Phase 2: Core App Features**
-- [x] Usage Simulator: sliders for HVAC, fridge, laundry, entertainment
+- [x] Usage Simulator: per-appliance sliders for 11 built-in appliances (fridge, AC, washer, TV, and more), plus the ability to add custom appliances
 - [x] Savings Visualizer: bar chart, default usage vs. your scenario
 - [x] Personalized Energy Score (1–100) vs. regional baseline
 - [x] Top 3 "energy hog" detection with tailored tips
@@ -43,6 +41,7 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 
 **Phase 4: Deployment**
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+- [ ] Digital marketing campaign strategy
 - [ ] Demo narrative
 
 ---
@@ -59,9 +58,11 @@ Tracking against the team's MVP scope doc. The frontend now runs on real data se
 
 ## 5. Tech Stack
 
-- **Backend**: Flask (Python)
 - **Frontend**: React + TypeScript (Vite), plain CSS with a shared color/typography system, [lucide-react](https://lucide.dev/) for icons
+- **Backend**: Python + Flask
+- **Data Sources**: [EIA.gov](https://www.eia.gov/) (appliance benchmarks), [Kaggle](https://www.kaggle.com/) (tenant baseline profiles)
 - **Deployment**: Render (backend web service + frontend static site)
+- **Tooling**: Git + GitHub for version control
 
 ---
 
@@ -108,8 +109,8 @@ New to running a project locally? Here's what to install first:
 Once those are installed, open a terminal and clone the repo (skip this step if you already have the project folder):
 
 ```bash
-git clone <this-repo-url>                       # download the project files to your computer
-cd team-nexus-household-energy-optimizer        # move into the project folder
+git clone https://github.com/Mentor-Me-Collective/grow-with-google-showcase.git   # download the project files to your computer
+cd grow-with-google-showcase/2026-cohort/team-nexus-household-energy-optimizer   # move into this project's folder
 ```
 
 The backend and frontend run as two separate servers, so you'll want two terminal tabs/windows open at the same time, one for each set of steps below.
@@ -151,8 +152,9 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Days 1–3 | July 25 – July 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
 | Days 4–7 | July 28 – July 31 | Usage simulator + score logic in parallel |
 | Days 8–14 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
-| Days 15–18 | August 8 – August 11 | Deployment, README finalized |
+| Days 15–18 | August 8 – August 11 | Deployment, README finalized, marketing campaign strategy + email/social assets drafted |
 | Days 19–21 | August 12 – August 14 | Final testing, demo/pitch prep, submission |
+| Post-submission | Launch – Launch + 90 days | Marketing campaign execution: email nurture sequence + Instagram/TikTok/LinkedIn content, tracked against sign-up, open rate, CTR, and engagement KPIs |
 
 ---
 
