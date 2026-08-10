@@ -55,8 +55,8 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 **Phase 4: Deployment**
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [x] Risks & mitigations
-- [ ] Digital marketing campaign strategy
-- [ ] Demo narrative
+- [x] Digital marketing campaign: two video commercials, see [Demo](#13-demo)
+- [ ] Demo video
 
 ---
 
@@ -149,9 +149,9 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Days 1–3 | July 25 – July 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
 | Days 4–7 | July 28 – July 31 | Usage simulator + score logic in parallel |
 | Days 8–14 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
-| Days 15–18 | August 8 – August 11 | Deployment, README finalized, marketing campaign strategy + email/social assets drafted |
+| Days 15–18 | August 8 – August 11 | Deployment, README finalized, two video commercials produced |
 | Days 19–21 | August 12 – August 14 | Final testing, demo/pitch prep, submission |
-| Post-submission | Launch – Launch + 90 days | Marketing campaign execution: email nurture sequence + Instagram/TikTok/LinkedIn content, tracked against sign-up, open rate, CTR, and engagement KPIs |
+| Post-submission | Launch – Launch + 90 days | Campaign distribution: run the two commercials as organic social content (Instagram/TikTok/LinkedIn), tracked against views, watch-through rate, click-through to the live app, and engagement |
 
 ---
 
@@ -159,7 +159,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (marketing campaign execution, demo narrative) explicitly deprioritized behind core functionality |
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (demo narrative, ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
 | Render free-tier cold starts | The live site can take up to a minute to respond after idling, which could read as broken during a live demo or grading pass | Documented clearly in the README and Demo section; recorded walkthrough video avoids relying on a cold live load |
 | Synthetic, hand-modeled tenant baseline profiles (not a large real-world usage dataset) | Baseline comparisons may not generalize to every household | Grounded the underlying appliance data in EIA.gov figures (methodology in [data-sources.md](docs/data-sources.md)); validated framing (sliders over manual entry, dual cost/impact messaging) against real renter interviews, see [user-research.md](docs/user-research.md) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages | Audited with `pip-audit` and patched (Flask, flask-cors, python-dotenv bumped); added a CI security-check workflow to catch regressions |
@@ -194,18 +194,29 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 |------|------|---------|---------------------|
 | [Ashenafi Mekonnen Demssie](https://www.linkedin.com/in/ashenafi-mekonnen-demssie/)| Cybersecurity Lead | ashenafimekonnen600@gmail.com | Dependency vulnerability audit (pip-audit), secret-scan review, automated security CI via GitHub Actions, security audit documentation |
 | [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Lead | peacek301@gmail.com | Dataset cleaning, baseline profiles, calculation functions |
-| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging, demo narrative, social/email ad (stretch) |
+| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging and campaign strategy; scripted and created the two video commercials |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX/UI Lead & Full-Stack/Integration | sehr.abrar1@gmail.com | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
 
 ---
 
 ## 13. Demo
 
-Live App: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+**Live App**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 
 > Hosted on Render's free tier, which spins down after inactivity, the first load after a period of idle time can take up to a minute while the server wakes back up. Subsequent loads are fast.
 
-Demo narrative: *Coming soon.*
+### Walkthrough
+
+> **Recorded Demo**: *Coming soon.*
+
+### Marketing Campaign
+
+Two short-form video commercials aimed at apartment tenants, both built on the same pitch: your energy usage is something you can see and keep track of, without buying any hardware.
+
+- **[Commercial 1 →](https://drive.google.com/file/d/1Ocg_sx7XFVKKbQ6syr7kK6Z2tyGS-al6/view?usp=drive_link)**
+- **[Commercial 2 →](https://drive.google.com/file/d/1_nsnz1r29N_yqFIGtG11OMvgQ4X0HxZH/view?usp=drive_link)**
+
+Distribution plan and success metrics are in the post-submission row of the [Project Timeline](#8-project-timeline).
 
 ---
 

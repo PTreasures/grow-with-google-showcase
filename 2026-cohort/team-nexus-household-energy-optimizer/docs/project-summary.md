@@ -82,7 +82,7 @@ Research directly shaped the design:
 |---|---|---|
 | Ashenafi Mekonnen Demssie | Cybersecurity Lead | Security considerations doc, input validation review, dependency audit |
 | Peace Kahunde | Data Lead | Dataset cleaning, baseline profiles, calculation functions |
-| Priscilla Gyepi-Garbrah | Digital Marketing Lead | Launch messaging, demo narrative, social/email ad (stretch) |
+| Priscilla Gyepi-Garbrah | Digital Marketing Lead | Launch messaging and campaign strategy; scripted and created the two video commercials |
 | Sehr Abrar | UX/UI Lead & Full-Stack/Integration | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
 
 ### Timeline
@@ -94,18 +94,18 @@ Research directly shaped the design:
 | Days 1–3 | Jul 25 – Jul 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
 | Days 4–7 | Jul 28 – Jul 31 | Usage simulator + score logic in parallel |
 | Days 8–14 | Aug 1 – Aug 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
-| Days 15–18 | Aug 8 – Aug 11 | Deployment, README finalized |
+| Days 15–18 | Aug 8 – Aug 11 | Deployment, README finalized, two video commercials produced |
 | Days 19–21 | Aug 12 – Aug 14 | Final testing, demo/pitch prep, submission |
 
 ### Status
 
-As of August 2, 2026: Phases 1, 2, deployment, and the security review are complete — the frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, dependencies have been audited and patched, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). Remaining work is the recorded demo walkthrough and the marketing campaign execution.
+As of August 10, 2026: Phases 1, 2, deployment, and the security review are complete — the frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, dependencies have been audited and patched, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). The marketing campaign has since shipped as two video commercials (linked in the project README). Remaining work is the recorded demo walkthrough.
 
 ### Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the deadline | Scoped hard to an MVP checklist; stretch goals (marketing campaign execution, demo narrative) explicitly deprioritized behind core functionality |
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the deadline | Scoped hard to an MVP checklist; stretch goals (demo narrative, ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
 | Render free-tier cold starts | The live site can take up to a minute to respond after idling, risking a bad first impression during grading | Documented clearly in the README/Demo section; the recorded walkthrough doesn't depend on a cold live load |
 | Synthetic, hand-modeled tenant baseline profiles rather than a large real-world usage dataset | Baseline comparisons may not generalize to every household | Grounded the underlying appliance wattage/hours data in EIA.gov figures; validated the input-flow and messaging design against real renter interviews (see [user-research.md](./user-research.md)) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages (Flask, flask-cors, python-dotenv) | Audited with `pip-audit`, patched, and added a CI security-check workflow to catch regressions going forward |
