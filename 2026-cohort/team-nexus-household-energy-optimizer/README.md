@@ -97,6 +97,7 @@ team-nexus-household-energy-optimizer/
 
 - **[project-summary.pdf](docs/project-summary.pdf)**: the 3-page written summary of research, solution, and implementation plan (markdown source: [project-summary.md](docs/project-summary.md))
 - [user-research.md](docs/user-research.md): interview notes, key findings, and the five personas
+- [design-system.md](docs/design-system.md): UI spec, color tokens, theming, text sizing, and accessibility
 - [data-sources.md](docs/data-sources.md): dataset methodology and what changed from the original draft
 - [architecture.md](docs/architecture.md): system diagram and the client-side vs. server-side split
 - [security-audit-2026-08.md](docs/security-audit-2026-08.md): dependency vulnerability findings
