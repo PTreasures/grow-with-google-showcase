@@ -1,4 +1,4 @@
-# Security Audit — Dependency Vulnerability Scan
+# Security Audit: Dependency Vulnerability Scan
 
 **Date:** August 2026
 
@@ -39,6 +39,6 @@ rather than checked manually.
 
 ## Additional Checks Performed
 
-- Manually reviewed the codebase for hardcoded secrets/API keys — none found
+- Manually reviewed the codebase for hardcoded secrets/API keys, none found
 - Confirmed `.env` files are properly excluded via `.gitignore`
 - Confirmed only safe `.env.example` placeholder files are committed

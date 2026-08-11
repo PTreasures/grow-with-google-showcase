@@ -56,7 +56,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [x] Risks & mitigations
 - [x] Digital marketing campaign: two video commercials, see [Demo](#13-demo)
-- [ ] Demo video
+- [x] Demo video, see [Demo](#13-demo)
 
 ---
 
@@ -84,10 +84,10 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ```bash
 team-nexus-household-energy-optimizer/
-├── backend/          # Flask API — app.py, data.py, calculations.py, requirements.txt
+├── backend/          # Flask API: app.py, data.py, calculations.py, requirements.txt
 ├── data/             # Appliance, tenant-profile, and region datasets (CSV/JSON)
 ├── docs/             # user-research.md, data-sources.md, architecture.md, security-audit-2026-08.md, project-summary.md
-├── frontend/         # React + TypeScript app (Vite) — src/pages, src/components, src/lib
+├── frontend/         # React + TypeScript app (Vite): src/pages, src/components, src/lib
 ├── .gitignore        # Ignored files (env, deps, build output, etc.)
 ├── LICENSE           # MIT License
 └── README.md         # Project overview and documentation
@@ -99,9 +99,9 @@ team-nexus-household-energy-optimizer/
 
 New to running a project locally? Here's what to install first:
 
-- **[Python 3.9+](https://www.python.org/downloads/)** — needed to run the Flask backend
-- **[Node.js 18+](https://nodejs.org/)** (npm comes bundled with it) — needed to run the React frontend
-- **[Git](https://git-scm.com/downloads)** — needed to clone this repository, if you haven't already
+- **[Python 3.9+](https://www.python.org/downloads/)**, needed to run the Flask backend
+- **[Node.js 18+](https://nodejs.org/)** (npm comes bundled with it), needed to run the React frontend
+- **[Git](https://git-scm.com/downloads)**, needed to clone this repository, if you haven't already
 
 Once those are installed, open a terminal and clone the repo (skip this step if you already have the project folder):
 
@@ -159,7 +159,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (demo narrative, ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
 | Render free-tier cold starts | The live site can take up to a minute to respond after idling, which could read as broken during a live demo or grading pass | Documented clearly in the README and Demo section; recorded walkthrough video avoids relying on a cold live load |
 | Synthetic, hand-modeled tenant baseline profiles (not a large real-world usage dataset) | Baseline comparisons may not generalize to every household | Grounded the underlying appliance data in EIA.gov figures (methodology in [data-sources.md](docs/data-sources.md)); validated framing (sliders over manual entry, dual cost/impact messaging) against real renter interviews, see [user-research.md](docs/user-research.md) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages | Audited with `pip-audit` and patched (Flask, flask-cors, python-dotenv bumped); added a CI security-check workflow to catch regressions |
@@ -169,11 +169,11 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 10. Security Considerations
 
-- **No accounts, no persistent storage.** There's no login and nothing about a tenant's usage is stored server-side or in a database — the app is entirely session-based on the client.
+- **No accounts, no persistent storage.** There's no login and nothing about a tenant's usage is stored server-side or in a database; the app is entirely session-based on the client.
 - **Input validation, client and server side.** Hours-per-day values are clamped against min/max/NaN/negative input in both the frontend (`UsageSimulator.tsx`) and the backend (`clamp_hours` in `backend/calculations.py`), so malformed input can't crash the API or produce negative energy/cost figures. Wattage (1–10,000W) and quantity (1–20) are similarly clamped in the UI.
 - **Unknown region/baseline IDs are rejected, not silently ignored.** `/api/simulate` returns a 400 for an unrecognized `region_id` or `baseline_id` instead of falling back quietly, so bad input surfaces as an error rather than a wrong answer.
-- **CORS is intentionally open.** `CORS(app)` allows all origins, since this is a public, read-mostly API with no authenticated or user-specific data behind it — there's nothing sensitive a stricter policy would be protecting.
-- **Dependency vulnerabilities audited and patched.** Scanned with `pip-audit`, 7 known CVEs found and fixed across Flask, flask-cors, and python-dotenv — full findings in [security-audit-2026-08.md](docs/security-audit-2026-08.md).
+- **CORS is intentionally open.** `CORS(app)` allows all origins, since this is a public, read-mostly API with no authenticated or user-specific data behind it; there's nothing sensitive a stricter policy would be protecting.
+- **Dependency vulnerabilities audited and patched.** Scanned with `pip-audit`, 7 known CVEs found and fixed across Flask, flask-cors, and python-dotenv, full findings in [security-audit-2026-08.md](docs/security-audit-2026-08.md).
 - **No secrets committed.** Real `.env` files are excluded via `.gitignore`; only `.env.example` placeholders are checked in. A `gitleaks` secret scan and `pip-audit` dependency check both run automatically in CI (`.github/workflows/security-check.yml`) on pushes and pull requests.
 
 ---
@@ -207,7 +207,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ### Walkthrough
 
-> **Recorded Demo**: *Coming soon.*
+- **[Watch the demo walkthrough →](https://youtu.be/B45X0HwYUBw)**
 
 ### Marketing Campaign
 

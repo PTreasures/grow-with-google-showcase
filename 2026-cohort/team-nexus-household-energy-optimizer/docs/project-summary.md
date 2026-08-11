@@ -1,4 +1,4 @@
-# Household Energy Efficiency Optimizer — Project Summary
+# Household Energy Efficiency Optimizer: Project Summary
 
 **Team Nexus Collaborative**
 UN SDG 7: [Affordable and Clean Energy](https://www.un.org/sustainabledevelopment/energy/)
@@ -26,19 +26,19 @@ Interviews covered four questions: whether tenants know what drives their energy
 
 ### Key Findings
 
-- **Nobody tracks appliance hours.** No interviewee could estimate how many hours a day they run their AC, laundry, or entertainment devices. Manual kWh/hour entry is a non-starter — lifestyle-style questions ("how often do you use your AC?") are answerable; raw usage logs are not.
+- **Nobody tracks appliance hours.** No interviewee could estimate how many hours a day they run their AC, laundry, or entertainment devices. Manual kWh/hour entry is a non-starter: lifestyle-style questions ("how often do you use your AC?") are answerable; raw usage logs are not.
 - **Score trust depends on explanation, not just a number.** Users said they'd distrust a score unless it's clear how it's calculated and what it's driving toward.
 - **Motivation splits into two currencies: money and impact.** Some users only care about the bill; others want to see the environmental payoff. The product needs to speak to both without forcing users to pick a "mode."
-- **Effort tolerance is low.** Busy professionals and students in particular abandon anything that feels like data entry — convenience beats precision for this audience.
-- **Shared/family living complicates attribution.** Students and parents both flagged that usage isn't just "mine" — it's split across roommates or driven by household size, so the tool needs to work off personal habits and household context, not assumed full control over usage.
+- **Effort tolerance is low.** Busy professionals and students in particular abandon anything that feels like data entry; convenience beats precision for this audience.
+- **Shared/family living complicates attribution.** Students and parents both flagged that usage isn't just "mine"; it's split across roommates or driven by household size, so the tool needs to work off personal habits and household context, not assumed full control over usage.
 
-We synthesized these findings into five personas — Budget-Conscious Renter, Eco-Conscious Renter, Busy Professional, Student in Shared Accommodation, and Family-Oriented User — spanning different motivations (cost vs. impact), input tolerances, and living situations. Full interview notes and persona detail live in [`docs/user-research.md`](./user-research.md).
+We synthesized these findings into five personas (Budget-Conscious Renter, Eco-Conscious Renter, Busy Professional, Student in Shared Accommodation, and Family-Oriented User) spanning different motivations (cost vs. impact), input tolerances, and living situations. Full interview notes and persona detail live in [`docs/user-research.md`](./user-research.md).
 
 ---
 
 ## 2. Proposed Solution
 
-A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips — all benchmarked against real-world EIA.gov data instead of live hardware readings.
+A web app where tenants input basic appliance usage or sample bill data to get a **Personalized Energy Score**, explore "What-If" savings scenarios via sliders, and receive automated, personalized tips, all benchmarked against real-world EIA.gov data instead of live hardware readings.
 
 Research directly shaped the design:
 
@@ -52,10 +52,10 @@ Research directly shaped the design:
 
 ### Core Features
 
-- **Usage Simulator** — individual sliders for 11 built-in appliances (fridge, AC, washer/dryer, TV, and more), plus the ability to add custom appliances
-- **Savings Visualizer** — bar chart comparing default usage vs. the user's scenario
-- **Personalized Energy Score (1–100)** — benchmarked against a regional baseline
-- **Top 3 "Energy Hog" Detection** — tailored, actionable tips targeting the highest-impact categories
+- **Usage Simulator**, individual sliders for 11 built-in appliances (fridge, AC, washer/dryer, TV, and more), plus the ability to add custom appliances
+- **Savings Visualizer**, bar chart comparing default usage vs. the user's scenario
+- **Personalized Energy Score (1–100)**, benchmarked against a regional baseline
+- **Top 3 "Energy Hog" Detection**, tailored, actionable tips targeting the highest-impact categories
 
 ---
 
@@ -63,15 +63,15 @@ Research directly shaped the design:
 
 ### Tech Stack
 
-- **Backend**: Flask (Python) — serves appliance, tenant-profile, and region data, and exposes a `/api/simulate` endpoint for parity with frontend calculations
+- **Backend**: Flask (Python), serves appliance, tenant-profile, and region data, and exposes a `/api/simulate` endpoint for parity with frontend calculations
 - **Frontend**: React + TypeScript (Vite), plain CSS with a shared color/typography system, [lucide-react](https://lucide.dev/) for icons
 - **Deployment**: Render (backend web service + frontend static site)
 
 ### Data & Calculations
 
-- `data/eia_appliances.csv` — 11 appliances with wattage, default hours/day, and category, cleaned from EIA.gov
-- `data/tenant_profiles.json` — 3 synthetic baseline profiles (1-Bed / 2-Bed / 3-Bed), modeled on typical usage by home size
-- `data/regions.json` — rate and carbon-intensity table across 15 regions
+- `data/eia_appliances.csv`: 11 appliances with wattage, default hours/day, and category, cleaned from EIA.gov
+- `data/tenant_profiles.json`: 3 synthetic baseline profiles (1-Bed / 2-Bed / 3-Bed), modeled on typical usage by home size
+- `data/regions.json`: rate and carbon-intensity table across 15 regions
 - Core kWh / cost / carbon math is implemented once in TypeScript (`frontend/src/lib/calculations.ts`, driving the live simulator) and mirrored in Python (`backend/calculations.py`) so the API stays in sync with what the UI computes
 - Full data methodology, including Peace's original draft figures and what changed en route to the shipped schema, is in [data-sources.md](./data-sources.md)
 - Full system diagram and data flow (what's computed client-side vs. server-side, and why) is in [architecture.md](./architecture.md)
@@ -99,13 +99,13 @@ Research directly shaped the design:
 
 ### Status
 
-As of August 10, 2026: Phases 1, 2, deployment, and the security review are complete — the frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, dependencies have been audited and patched, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). The marketing campaign has since shipped as two video commercials (linked in the project README). Remaining work is the recorded demo walkthrough.
+As of August 11, 2026: the project is complete. All four phases are done, every item on the MVP checklist is checked off, and nothing is outstanding. The frontend runs on real backend data (not mocks), the simulator, savings visualizer, score, and energy-hog detection are all implemented, dependencies have been audited and patched, and the app is live at [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/). The marketing campaign shipped as two video commercials, and the demo walkthrough is recorded, both linked from the Demo section of the project README. What's left is final testing and the August 14 submission itself.
 
 ### Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the deadline | Scoped hard to an MVP checklist; stretch goals (demo narrative, ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the deadline | Scoped hard to an MVP checklist; stretch goals (ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
 | Render free-tier cold starts | The live site can take up to a minute to respond after idling, risking a bad first impression during grading | Documented clearly in the README/Demo section; the recorded walkthrough doesn't depend on a cold live load |
 | Synthetic, hand-modeled tenant baseline profiles rather than a large real-world usage dataset | Baseline comparisons may not generalize to every household | Grounded the underlying appliance wattage/hours data in EIA.gov figures; validated the input-flow and messaging design against real renter interviews (see [user-research.md](./user-research.md)) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages (Flask, flask-cors, python-dotenv) | Audited with `pip-audit`, patched, and added a CI security-check workflow to catch regressions going forward |
