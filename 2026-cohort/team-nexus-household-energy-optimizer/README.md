@@ -55,8 +55,8 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 **Phase 4: Deployment**
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [x] Risks & mitigations
-- [ ] Digital marketing campaign strategy
-- [ ] Demo narrative
+- [x] Digital marketing campaign: two video commercials, see [Demo](#13-demo)
+- [x] Demo video, see [Demo](#13-demo)
 
 ---
 
@@ -84,14 +84,23 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 
 ```bash
 team-nexus-household-energy-optimizer/
-├── backend/          # Flask API — app.py, data.py, calculations.py, requirements.txt
+├── backend/          # Flask API: app.py, data.py, calculations.py, requirements.txt
 ├── data/             # Appliance, tenant-profile, and region datasets (CSV/JSON)
-├── docs/             # user-research.md, data-sources.md, architecture.md, security-audit-2026-08.md, project-summary.md
-├── frontend/         # React + TypeScript app (Vite) — src/pages, src/components, src/lib
+├── docs/             # written summary (PDF + markdown source), research, data, architecture, and security docs
+├── frontend/         # React + TypeScript app (Vite): src/pages, src/components, src/lib
 ├── .gitignore        # Ignored files (env, deps, build output, etc.)
 ├── LICENSE           # MIT License
 └── README.md         # Project overview and documentation
 ```
+
+**Docs index:**
+
+- **[project-summary.pdf](docs/project-summary.pdf)**: the 3-page written summary of research, solution, and implementation plan (markdown source: [project-summary.md](docs/project-summary.md))
+- [user-research.md](docs/user-research.md): interview notes, key findings, and the five personas
+- [design-system.md](docs/design-system.md): UI spec, color tokens, theming, text sizing, and accessibility
+- [data-sources.md](docs/data-sources.md): dataset methodology and what changed from the original draft
+- [architecture.md](docs/architecture.md): system diagram and the client-side vs. server-side split
+- [security-audit-2026-08.md](docs/security-audit-2026-08.md): dependency vulnerability findings
 
 ---
 
@@ -99,9 +108,9 @@ team-nexus-household-energy-optimizer/
 
 New to running a project locally? Here's what to install first:
 
-- **[Python 3.9+](https://www.python.org/downloads/)** — needed to run the Flask backend
-- **[Node.js 18+](https://nodejs.org/)** (npm comes bundled with it) — needed to run the React frontend
-- **[Git](https://git-scm.com/downloads)** — needed to clone this repository, if you haven't already
+- **[Python 3.9+](https://www.python.org/downloads/)**, needed to run the Flask backend
+- **[Node.js 18+](https://nodejs.org/)** (npm comes bundled with it), needed to run the React frontend
+- **[Git](https://git-scm.com/downloads)**, needed to clone this repository, if you haven't already
 
 Once those are installed, open a terminal and clone the repo (skip this step if you already have the project folder):
 
@@ -149,9 +158,9 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Days 1–3 | July 25 – July 27 | Confirm MVP scope + tech stack, assign owners, start dataset cleaning & calc functions |
 | Days 4–7 | July 28 – July 31 | Usage simulator + score logic in parallel |
 | Days 8–14 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
-| Days 15–18 | August 8 – August 11 | Deployment, README finalized, marketing campaign strategy + email/social assets drafted |
+| Days 15–18 | August 8 – August 11 | Deployment, README finalized, two video commercials produced |
 | Days 19–21 | August 12 – August 14 | Final testing, demo/pitch prep, submission |
-| Post-submission | Launch – Launch + 90 days | Marketing campaign execution: email nurture sequence + Instagram/TikTok/LinkedIn content, tracked against sign-up, open rate, CTR, and engagement KPIs |
+| Post-submission | Launch – Launch + 90 days | Campaign distribution: run the two commercials as organic social content (Instagram/TikTok/LinkedIn), tracked against views, watch-through rate, click-through to the live app, and engagement |
 
 ---
 
@@ -159,7 +168,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (marketing campaign execution, demo narrative) explicitly deprioritized behind core functionality |
+| Compressed timeline (kickoff slipped to July 25, ~3 weeks for a cross-functional MVP) | Less room for polish or scope creep before the Aug 14 deadline | Scoped hard to an MVP checklist; stretch goals (ongoing campaign distribution) explicitly deprioritized behind core functionality. The campaign itself was scoped to two short-form commercials rather than a multi-channel launch, which kept it deliverable inside the window |
 | Render free-tier cold starts | The live site can take up to a minute to respond after idling, which could read as broken during a live demo or grading pass | Documented clearly in the README and Demo section; recorded walkthrough video avoids relying on a cold live load |
 | Synthetic, hand-modeled tenant baseline profiles (not a large real-world usage dataset) | Baseline comparisons may not generalize to every household | Grounded the underlying appliance data in EIA.gov figures (methodology in [data-sources.md](docs/data-sources.md)); validated framing (sliders over manual entry, dual cost/impact messaging) against real renter interviews, see [user-research.md](docs/user-research.md) |
 | Vulnerable backend dependencies | Known CVEs in outdated packages | Audited with `pip-audit` and patched (Flask, flask-cors, python-dotenv bumped); added a CI security-check workflow to catch regressions |
@@ -169,11 +178,11 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 
 ## 10. Security Considerations
 
-- **No accounts, no persistent storage.** There's no login and nothing about a tenant's usage is stored server-side or in a database — the app is entirely session-based on the client.
+- **No accounts, no persistent storage.** There's no login and nothing about a tenant's usage is stored server-side or in a database; the app is entirely session-based on the client.
 - **Input validation, client and server side.** Hours-per-day values are clamped against min/max/NaN/negative input in both the frontend (`UsageSimulator.tsx`) and the backend (`clamp_hours` in `backend/calculations.py`), so malformed input can't crash the API or produce negative energy/cost figures. Wattage (1–10,000W) and quantity (1–20) are similarly clamped in the UI.
 - **Unknown region/baseline IDs are rejected, not silently ignored.** `/api/simulate` returns a 400 for an unrecognized `region_id` or `baseline_id` instead of falling back quietly, so bad input surfaces as an error rather than a wrong answer.
-- **CORS is intentionally open.** `CORS(app)` allows all origins, since this is a public, read-mostly API with no authenticated or user-specific data behind it — there's nothing sensitive a stricter policy would be protecting.
-- **Dependency vulnerabilities audited and patched.** Scanned with `pip-audit`, 7 known CVEs found and fixed across Flask, flask-cors, and python-dotenv — full findings in [security-audit-2026-08.md](docs/security-audit-2026-08.md).
+- **CORS is intentionally open.** `CORS(app)` allows all origins, since this is a public, read-mostly API with no authenticated or user-specific data behind it; there's nothing sensitive a stricter policy would be protecting.
+- **Dependency vulnerabilities audited and patched.** Scanned with `pip-audit`, 7 known CVEs found and fixed across Flask, flask-cors, and python-dotenv, full findings in [security-audit-2026-08.md](docs/security-audit-2026-08.md).
 - **No secrets committed.** Real `.env` files are excluded via `.gitignore`; only `.env.example` placeholders are checked in. A `gitleaks` secret scan and `pip-audit` dependency check both run automatically in CI (`.github/workflows/security-check.yml`) on pushes and pull requests.
 
 ---
@@ -194,18 +203,29 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 |------|------|---------|---------------------|
 | [Ashenafi Mekonnen Demssie](https://www.linkedin.com/in/ashenafi-mekonnen-demssie/)| Cybersecurity Lead | ashenafimekonnen600@gmail.com | Dependency vulnerability audit (pip-audit), secret-scan review, automated security CI via GitHub Actions, security audit documentation |
 | [Peace Kahunde](https://www.linkedin.com/in/pkahunde) | Data Lead | peacek301@gmail.com | Dataset cleaning, baseline profiles, calculation functions |
-| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging, demo narrative, social/email ad (stretch) |
+| [Priscilla Gyepi-Garbrah](https://www.linkedin.com/in/priscilla-gyepi-garbrah-5190031ab/) | Digital Marketing Lead | gyepigarbrahpriscilla@gmail.com | Launch messaging and campaign strategy; scripted and created the two video commercials |
 | [Sehr Abrar](https://www.linkedin.com/in/sehr-abrar/) | UX/UI Lead & Full-Stack/Integration | sehr.abrar1@gmail.com | Input flow, sliders/forms, layout, score feedback design; app structure, connecting calc logic to UI, deployment |
 
 ---
 
 ## 13. Demo
 
-Live App: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
+**Live App**: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 
 > Hosted on Render's free tier, which spins down after inactivity, the first load after a period of idle time can take up to a minute while the server wakes back up. Subsequent loads are fast.
 
-Demo narrative: *Coming soon.*
+### Walkthrough
+
+- **[Watch the demo walkthrough →](https://youtu.be/B45X0HwYUBw)**
+
+### Marketing Campaign
+
+Two short-form video commercials aimed at apartment tenants, both built on the same pitch: your energy usage is something you can see and keep track of, without buying any hardware.
+
+- **[Commercial 1 →](https://drive.google.com/file/d/1Ocg_sx7XFVKKbQ6syr7kK6Z2tyGS-al6/view?usp=drive_link)**
+- **[Commercial 2 →](https://drive.google.com/file/d/1_nsnz1r29N_yqFIGtG11OMvgQ4X0HxZH/view?usp=drive_link)**
+
+Distribution plan and success metrics are in the post-submission row of the [Project Timeline](#8-project-timeline).
 
 ---
 

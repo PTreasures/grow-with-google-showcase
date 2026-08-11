@@ -28,12 +28,12 @@ Peace's first pass included per-appliance monthly kWh/cost estimates and a `Note
 
 ### What changed for the shipped version
 
-The `Watts` and `Hours_Per_Day` values above carried over **unchanged** into `data/eia_appliances.csv` — every figure matches exactly. What differs:
+The `Watts` and `Hours_Per_Day` values above carried over **unchanged** into `data/eia_appliances.csv`, every figure matches exactly. What differs:
 
 - **Columns renamed**: `Watts` → `Avg_Watts`, `Hours_Per_Day` → `Default_Hours_Per_Day`, to match what `backend/calculations.py` and `backend/data.py` key off of.
-- **`Category` added** (Kitchen, HVAC, Laundry, Entertainment, Office, Lighting) — wasn't in Peace's draft; added so the simulator can group appliances, color-code them, and pick relevant tips.
-- **`Monthly_kWh` / `Monthly_Cost` dropped, not lost** — these were computed at a single implied electricity rate. The shipped app is region-aware (`data/regions.json`, 15 regions with different `rate_per_kwh`), so a hardcoded cost column would be wrong for 14 of the 15 regions. Cost and kWh are now computed live per region instead of stored statically.
-- **`Notes` dropped from the CSV, preserved above** — not used anywhere in code, but this is the context for *why* each default-hours number is what it is (e.g., the washing machine's `1 hr/day` default represents "3 loads per week" divided out, not a literal daily habit). Kept here so that reasoning isn't lost.
+- **`Category` added** (Kitchen, HVAC, Laundry, Entertainment, Office, Lighting), wasn't in Peace's draft; added so the simulator can group appliances, color-code them, and pick relevant tips.
+- **`Monthly_kWh` / `Monthly_Cost` dropped, not lost**: these were computed at a single implied electricity rate. The shipped app is region-aware (`data/regions.json`, 15 regions with different `rate_per_kwh`), so a hardcoded cost column would be wrong for 14 of the 15 regions. Cost and kWh are now computed live per region instead of stored statically.
+- **`Notes` dropped from the CSV, preserved above**: not used anywhere in code, but this is the context for *why* each default-hours number is what it is (e.g., the washing machine's `1 hr/day` default represents "3 loads per week" divided out, not a literal daily habit). Kept here so that reasoning isn't lost.
 
 ---
 
