@@ -86,12 +86,20 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 team-nexus-household-energy-optimizer/
 ├── backend/          # Flask API: app.py, data.py, calculations.py, requirements.txt
 ├── data/             # Appliance, tenant-profile, and region datasets (CSV/JSON)
-├── docs/             # user-research.md, data-sources.md, architecture.md, security-audit-2026-08.md, project-summary.md
+├── docs/             # written summary (PDF + markdown source), research, data, architecture, and security docs
 ├── frontend/         # React + TypeScript app (Vite): src/pages, src/components, src/lib
 ├── .gitignore        # Ignored files (env, deps, build output, etc.)
 ├── LICENSE           # MIT License
 └── README.md         # Project overview and documentation
 ```
+
+**Docs index:**
+
+- **[project-summary.pdf](docs/project-summary.pdf)**: the 3-page written summary of research, solution, and implementation plan (markdown source: [project-summary.md](docs/project-summary.md))
+- [user-research.md](docs/user-research.md): interview notes, key findings, and the five personas
+- [data-sources.md](docs/data-sources.md): dataset methodology and what changed from the original draft
+- [architecture.md](docs/architecture.md): system diagram and the client-side vs. server-side split
+- [security-audit-2026-08.md](docs/security-audit-2026-08.md): dependency vulnerability findings
 
 ---
 
