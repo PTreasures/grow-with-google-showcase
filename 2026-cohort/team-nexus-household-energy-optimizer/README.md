@@ -55,7 +55,7 @@ A web app where tenants input basic appliance usage or sample bill data to get a
 **Phase 4: Deployment**
 - [x] Live public URL: Deployed on Render: [tenant-power-tracker.onrender.com](https://tenant-power-tracker.onrender.com/)
 - [x] Risks & mitigations
-- [x] Digital marketing campaign: two video commercials, see [Demo](#13-demo)
+- [x] Digital marketing campaign: strategy, target persona, and two video commercials, see [marketing-campaign.md](docs/marketing-campaign.md)
 - [x] Demo video, see [Demo](#13-demo)
 
 ---
@@ -97,6 +97,7 @@ team-nexus-household-energy-optimizer/
 
 - **[project-summary.pdf](docs/project-summary.pdf)**: the 3-page written summary of research, solution, and implementation plan (markdown source: [project-summary.md](docs/project-summary.md))
 - [user-research.md](docs/user-research.md): interview notes, key findings, and the five personas
+- [marketing-campaign.md](docs/marketing-campaign.md): campaign strategy, goals and KPIs, target persona, and creative assets
 - [design-system.md](docs/design-system.md): UI spec, color tokens, theming, text sizing, and accessibility
 - [data-sources.md](docs/data-sources.md): dataset methodology and what changed from the original draft
 - [architecture.md](docs/architecture.md): system diagram and the client-side vs. server-side split
@@ -160,7 +161,7 @@ Kickoff slipped to July 25, so the roadmap below is compressed.
 | Days 8–14 | August 1 – August 7 | Simulator, savings visualizer, top-3 tips complete; UI polish & security review begin |
 | Days 15–18 | August 8 – August 11 | Deployment, README finalized, two video commercials produced |
 | Days 19–21 | August 12 – August 14 | Final testing, demo/pitch prep, submission |
-| Post-submission | Launch – Launch + 90 days | Campaign distribution: run the two commercials as organic social content (Instagram/TikTok/LinkedIn), tracked against views, watch-through rate, click-through to the live app, and engagement |
+| Post-submission | Launch – Launch + 90 days | Campaign execution: an educational email nurture sequence targeting 250 sign-ups at a 25% open rate and 5% CTR, plus the two commercials as organic social content (Instagram/TikTok/LinkedIn) targeting a 35% engagement lift and 300 qualified visits. Detail in [marketing-campaign.md](docs/marketing-campaign.md) |
 
 ---
 
@@ -225,7 +226,7 @@ Two short-form video commercials aimed at apartment tenants, both built on the s
 - **[Commercial 1 →](https://drive.google.com/file/d/1Ocg_sx7XFVKKbQ6syr7kK6Z2tyGS-al6/view?usp=drive_link)**
 - **[Commercial 2 →](https://drive.google.com/file/d/1_nsnz1r29N_yqFIGtG11OMvgQ4X0HxZH/view?usp=drive_link)**
 
-Distribution plan and success metrics are in the post-submission row of the [Project Timeline](#8-project-timeline).
+The commercials are the lead creative for a wider campaign covering email and organic social, with a target persona, channel goals, and tracked KPIs. Full strategy in **[marketing-campaign.md](docs/marketing-campaign.md)** ([source document](https://docs.google.com/document/d/13jdbKRCzv_RQ6gSE9ZFAelCqxq3D7awzZk7DIsjNT7w/edit?tab=t.0)).
 
 ---
 
